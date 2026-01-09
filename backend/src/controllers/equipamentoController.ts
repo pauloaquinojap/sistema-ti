@@ -1,8 +1,9 @@
-const pool = require("../config/db");
-const fs = require("fs"); // Necessário para manipular arquivos
+import { Request, Response } from "express";
+import pool from "../config/db";
+import fs from "fs";
 
 // --- 1. FUNÇÃO CADASTRAR EQUIPAMENTO (POST) ---
-const cadastrarEquipamento = async (req, res) => {
+export const cadastrarEquipamento = async (req: Request, res: Response) => {
   const {
     tipo_equipamento,
     modelo,
@@ -25,13 +26,13 @@ const cadastrarEquipamento = async (req, res) => {
     const checkQuery = "SELECT id FROM equipamentos WHERE numero_serie = $1";
     try {
       const checkResult = await pool.query(checkQuery, [numero_serie]);
-      if (checkResult.rowCount > 0) {
+      if (checkResult.rowCount && checkResult.rowCount > 0) {
         if (anexoPath) fs.unlinkSync(anexoPath);
         return res.status(400).json({
           mensagem: "Equipamento com este número de série já existe.",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro na checagem de série:", error.message);
     }
   }
@@ -89,7 +90,7 @@ const cadastrarEquipamento = async (req, res) => {
       mensagem: "Equipamento cadastrado com sucesso!",
       equipamento: { id: equipamentoId, patrimonio, numero_serie },
     });
-  } catch (error) {
+  } catch (error: any) {
     await pool.query("ROLLBACK");
     console.error(
       "Erro ao cadastrar equipamento (ROLLBACK EXECUTADO):",
@@ -111,7 +112,7 @@ const cadastrarEquipamento = async (req, res) => {
 };
 
 // --- 2. FUNÇÃO BUSCAR EQUIPAMENTO POR ID (GET) ---
-const buscarEquipamentoPorId = async (req, res) => {
+export const buscarEquipamentoPorId = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
     const equipamentoQuery = `
@@ -151,7 +152,7 @@ const buscarEquipamentoPorId = async (req, res) => {
       anexos: anexosResult.rows,
       historico: historicoResult.rows,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao buscar equipamento por ID:", error.message);
     res.status(500).json({
       mensagem: "Erro ao buscar equipamento.",
@@ -161,7 +162,7 @@ const buscarEquipamentoPorId = async (req, res) => {
 };
 
 // --- 3. FUNÇÃO ADICIONAR ANEXO SECUNDÁRIO (POST) ---
-const adicionarAnexoSecundario = async (req, res) => {
+export const adicionarAnexoSecundario = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   if (!req.file) {
@@ -184,7 +185,7 @@ const adicionarAnexoSecundario = async (req, res) => {
     res.status(201).json({
       mensagem: `Anexo '${nomeOriginalAnexo}' adicionado com sucesso ao equipamento ${id}.`,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao adicionar anexo secundário:", error.message);
 
     if (anexoPath) {
@@ -202,7 +203,7 @@ const adicionarAnexoSecundario = async (req, res) => {
 };
 
 // --- 4. FUNÇÃO EXCLUIR EQUIPAMENTO PERMANENTEMENTE (DELETE) ---
-const excluirEquipamento = async (req, res) => {
+export const excluirEquipamento = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
@@ -220,7 +221,7 @@ const excluirEquipamento = async (req, res) => {
       }) excluído permanentemente!`,
       id_excluido: result.rows[0].id,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao excluir equipamento:", error.message);
     res.status(500).json({
       mensagem: "Erro ao excluir equipamento.",
@@ -230,13 +231,13 @@ const excluirEquipamento = async (req, res) => {
 };
 
 // --- 5. FUNÇÃO LISTAR EQUIPAMENTOS ATIVOS (GET) ---
-const listarEquipamentosAtivos = async (req, res) => {
+export const listarEquipamentosAtivos = async (req: Request, res: Response) => {
   try {
     const query =
       "SELECT id, patrimonio, tipo_equipamento, modelo, usuario_atual, loja_atual, tipo_aquisicao, valor, observacoes, status, numero_serie, empresa_responsavel, configuracao FROM equipamentos WHERE status = 'ATIVO' ORDER BY patrimonio ASC";
     const result = await pool.query(query);
     res.status(200).json({ equipamentos: result.rows });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao listar equipamentos:", error.message);
     res.status(500).json({
       mensagem: "Erro ao listar equipamentos.",
@@ -246,7 +247,7 @@ const listarEquipamentosAtivos = async (req, res) => {
 };
 
 // --- 6. FUNÇÃO ATUALIZAR EQUIPAMENTO (PUT) ---
-const atualizarEquipamento = async (req, res) => {
+export const atualizarEquipamento = async (req: Request, res: Response) => {
   const { id } = req.params;
   const {
     tipo_equipamento,
@@ -315,7 +316,7 @@ const atualizarEquipamento = async (req, res) => {
       mensagem: `Equipamento ID ${id} atualizado com sucesso.`,
       equipamento: result.rows[0],
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao atualizar equipamento (PUT):", error.message);
     res.status(500).json({
       mensagem: "Erro ao atualizar equipamento.",
@@ -325,7 +326,7 @@ const atualizarEquipamento = async (req, res) => {
 };
 
 // --- 7. FUNÇÃO TRANSFERIR EQUIPAMENTO (PATCH) ---
-const transferirEquipamento = async (req, res) => {
+export const transferirEquipamento = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { usuario_atual, loja_atual, motivo_transferencia } = req.body;
 
@@ -391,7 +392,7 @@ const transferirEquipamento = async (req, res) => {
       mensagem: `Transferência registrada com sucesso.`,
       equipamento: result.rows[0],
     });
-  } catch (error) {
+  } catch (error: any) {
     await pool.query("ROLLBACK");
     console.error("Erro ao transferir equipamento:", error.message);
     res.status(500).json({
@@ -402,7 +403,7 @@ const transferirEquipamento = async (req, res) => {
 };
 
 // --- 8. REGISTRAR AÇÃO TÉCNICA (POST) ---
-const registrarAcaoTecnica = async (req, res) => {
+export const registrarAcaoTecnica = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { tipo, novaConfiguracao, descricao, dataProxima, valor, motivo } =
     req.body;
@@ -427,12 +428,10 @@ const registrarAcaoTecnica = async (req, res) => {
       parseFloat(valor?.toString().replace(",", ".")) || 0;
 
     if (tipo === "UPGRADE") {
-      // Atualiza para a nova configuração
       await pool.query(
         "UPDATE equipamentos SET configuracao = $1 WHERE id = $2",
         [novaConfiguracao, id]
       );
-      // Salva apenas com o separador para o frontend tratar
       detalhesHistorico = `${configuracaoAntiga} -> ${novaConfiguracao}`;
     } else if (tipo === "MANUTENCAO") {
       await pool.query(
@@ -460,20 +459,9 @@ const registrarAcaoTecnica = async (req, res) => {
 
     await pool.query("COMMIT");
     res.status(200).json({ mensagem: "Ação registrada com sucesso!" });
-  } catch (error) {
+  } catch (error: any) {
     await pool.query("ROLLBACK");
     console.error("Erro ao registrar ação técnica:", error.message);
     res.status(500).json({ mensagem: "Erro interno no servidor." });
   }
-};
-
-module.exports = {
-  cadastrarEquipamento,
-  atualizarEquipamento,
-  transferirEquipamento,
-  listarEquipamentosAtivos,
-  buscarEquipamentoPorId,
-  excluirEquipamento,
-  adicionarAnexoSecundario,
-  registrarAcaoTecnica,
 };

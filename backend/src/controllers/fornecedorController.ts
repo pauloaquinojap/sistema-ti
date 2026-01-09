@@ -1,9 +1,10 @@
-const pool = require("../config/db");
+import { Request, Response } from "express";
+import pool from "../config/db";
+import { PoolClient } from "pg";
 
 // --- 1. FUNÇÃO CADASTRAR FORNECEDOR (POST) ---
-const cadastrarFornecedor = async (req, res) => {
+export const cadastrarFornecedor = async (req: Request, res: Response) => {
   const {
-    // 1. Dados Básicos
     tipo_pessoa,
     cnpj,
     razao_social,
@@ -12,7 +13,6 @@ const cadastrarFornecedor = async (req, res) => {
     inscricao_municipal,
     cnae,
     observacoes,
-    // 2. Detalhes
     data_abertura,
     natureza_juridica,
     logradouro,
@@ -30,29 +30,24 @@ const cadastrarFornecedor = async (req, res) => {
     email_financeiro,
   } = req.body;
 
-  // Lógica de Anexo: Pega o nome do arquivo se ele existir (via Multer)
   const anexo_url = req.file ? req.file.filename : null;
-
-  let client;
+  let client: PoolClient | undefined;
 
   try {
     client = await pool.connect();
     await client.query("BEGIN");
 
-    // LÓGICA DE DUPLICIDADE: Verifica se o CNPJ já existe
     const checkQuery = "SELECT id, ativo FROM fornecedores WHERE cnpj = $1";
     const checkResult = await client.query(checkQuery, [cnpj]);
 
-    let fornecedorId;
+    let fornecedorId: number;
     let isReactivation = false;
 
     if (checkResult.rows.length > 0) {
       const existing = checkResult.rows[0];
-
       if (existing.ativo) {
         throw new Error("CNPJ_DUPLICADO");
       } else {
-        // Reativação e Atualização
         isReactivation = true;
         fornecedorId = existing.id;
 
@@ -73,12 +68,11 @@ const cadastrarFornecedor = async (req, res) => {
           cnae,
           observacoes,
           email_principal,
-          anexo_url, // Atualiza se enviado, senão mantém o antigo
+          anexo_url,
           fornecedorId,
         ]);
       }
     } else {
-      // Inserção Normal
       const principalQuery = `
         INSERT INTO fornecedores 
         (tipo_pessoa, cnpj, razao_social, nome_fantasia, inscricao_estadual, 
@@ -101,7 +95,6 @@ const cadastrarFornecedor = async (req, res) => {
       fornecedorId = result.rows[0].id;
     }
 
-    // Gerenciar Tabela de DETALHES
     if (isReactivation) {
       const updateDetalhes = `
         UPDATE fornecedor_detalhes SET
@@ -157,7 +150,6 @@ const cadastrarFornecedor = async (req, res) => {
       ]);
     }
 
-    // Histórico
     const acaoTexto = isReactivation
       ? "Reativação de Fornecedor"
       : "Criação de Fornecedor";
@@ -173,14 +165,13 @@ const cadastrarFornecedor = async (req, res) => {
         : "Fornecedor cadastrado com sucesso!",
       id: fornecedorId,
     });
-  } catch (error) {
+  } catch (error: any) {
     if (client) await client.query("ROLLBACK");
     if (error.message === "CNPJ_DUPLICADO") {
       return res
         .status(409)
         .json({ message: "Este CNPJ já está cadastrado e ativo." });
     }
-    console.error("Erro ao processar fornecedor:", error);
     res
       .status(500)
       .json({ message: "Erro ao cadastrar fornecedor.", error: error.message });
@@ -190,7 +181,7 @@ const cadastrarFornecedor = async (req, res) => {
 };
 
 // --- 2. LISTAR FORNECEDORES ATIVOS (GET) ---
-const listarFornecedoresAtivos = async (req, res) => {
+export const listarFornecedoresAtivos = async (req: Request, res: Response) => {
   try {
     const query = `
       SELECT f.id, f.cnpj, f.razao_social, f.email, f.anexo_url, d.nome_responsavel, d.celular_whatsapp
@@ -207,7 +198,7 @@ const listarFornecedoresAtivos = async (req, res) => {
 };
 
 // --- 3. BUSCAR DETALHES COMPLETOS ---
-const buscarDetalhesFornecedor = async (req, res) => {
+export const buscarDetalhesFornecedor = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
     const query = `
@@ -226,32 +217,23 @@ const buscarDetalhesFornecedor = async (req, res) => {
     const result = await pool.query(query, [id]);
     if (result.rows.length === 0)
       return res.status(404).json({ message: "Não encontrado." });
-
     res.status(200).json(result.rows[0]);
   } catch (error) {
-    console.error("Erro no Controller:", error);
     res.status(500).json({ message: "Erro ao buscar detalhes." });
   }
 };
 
 // --- 4. DESCONTINUAR FORNECEDOR (DELETE) ---
-const excluirFornecedor = async (req, res) => {
+export const excluirFornecedor = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { data_descontinuacao } = req.body;
-
   try {
-    const query = `
-        UPDATE fornecedores 
-        SET ativo = FALSE, data_descontinuacao = $1 
-        WHERE id = $2
-    `;
+    const query = `UPDATE fornecedores SET ativo = FALSE, data_descontinuacao = $1 WHERE id = $2`;
     await pool.query(query, [data_descontinuacao || new Date(), id]);
-
     await pool.query(
       "INSERT INTO fornecedor_historico (fornecedor_id, acao, usuario_responsavel, data_acao) VALUES ($1, 'Descontinuação', 'Sistema', NOW())",
       [id]
     );
-
     res.status(200).json({ message: "Fornecedor descontinuado com sucesso." });
   } catch (error) {
     res.status(500).json({ message: "Erro ao descontinuar fornecedor." });
@@ -259,16 +241,15 @@ const excluirFornecedor = async (req, res) => {
 };
 
 // --- 5. ATUALIZAR FORNECEDOR (PUT) ---
-const atualizarFornecedor = async (req, res) => {
+export const atualizarFornecedor = async (req: Request, res: Response) => {
   const { id } = req.params;
   const dados = req.body;
-  let client;
+  let client: PoolClient | undefined;
 
   try {
     client = await pool.connect();
     await client.query("BEGIN");
 
-    // Atualiza a tabela principal
     await client.query(
       `UPDATE fornecedores SET razao_social = $1, nome_fantasia = $2, 
        inscricao_estadual = $3, inscricao_municipal = $4, cnae = $5, observacoes = $6 
@@ -284,7 +265,6 @@ const atualizarFornecedor = async (req, res) => {
       ]
     );
 
-    // Atualiza a tabela de detalhes
     await client.query(
       `UPDATE fornecedor_detalhes SET 
         data_abertura = $1, natureza_juridica = $2, logradouro = $3, numero = $4, 
@@ -316,7 +296,6 @@ const atualizarFornecedor = async (req, res) => {
     res.status(200).json({ message: "Fornecedor atualizado com sucesso!" });
   } catch (error) {
     if (client) await client.query("ROLLBACK");
-    console.error(error);
     res.status(500).json({ message: "Erro ao atualizar fornecedor." });
   } finally {
     if (client) client.release();
@@ -324,11 +303,13 @@ const atualizarFornecedor = async (req, res) => {
 };
 
 // --- 6. LISTAR FORNECEDORES INATIVOS (GET) ---
-const listarFornecedoresInativos = async (req, res) => {
+export const listarFornecedoresInativos = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const query = `
-      SELECT f.id, f.cnpj, f.razao_social, f.email, 
-             d.nome_responsavel, d.celular_whatsapp
+      SELECT f.id, f.cnpj, f.razao_social, f.email, d.nome_responsavel, d.celular_whatsapp
       FROM fornecedores f
       LEFT JOIN fornecedor_detalhes d ON f.id = d.fornecedor_id
       WHERE f.ativo = FALSE
@@ -339,13 +320,4 @@ const listarFornecedoresInativos = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Erro ao listar fornecedores inativos." });
   }
-};
-
-module.exports = {
-  cadastrarFornecedor,
-  listarFornecedoresAtivos,
-  buscarDetalhesFornecedor,
-  excluirFornecedor,
-  atualizarFornecedor,
-  listarFornecedoresInativos, // <--- Adicionado aqui
 };

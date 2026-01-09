@@ -1,10 +1,10 @@
-const express = require("express");
-const router = express.Router();
-const fornecedorController = require("../controllers/fornecedorcontroller");
-const multer = require("multer");
-const path = require("path");
+import { Router } from "express";
+import * as fornecedorController from "../controllers/fornecedorController";
+import multer from "multer";
+import path from "path";
 
-// Configuração do Multer (Uploads)
+const router: Router = Router();
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads-fornecedor/");
@@ -23,26 +23,18 @@ router.post(
   fornecedorController.cadastrarFornecedor
 );
 
-// --- 2. ROTAS DE LISTAGEM (ESTÁTICAS) ---
-// ⚠️ IMPORTANTE: Estas rotas DEVEM vir ANTES da rota /:id
-// Se o controller não tiver "listarFornecedores", usamos "listarFornecedoresAtivos"
+// --- 2. ROTAS DE LISTAGEM ---
 router.get("/listar", fornecedorController.listarFornecedoresAtivos);
 router.get("/ativos", fornecedorController.listarFornecedoresAtivos);
 router.get("/inativos", fornecedorController.listarFornecedoresInativos);
 
-// --- 3. ROTAS DINÂMICAS (COM PARÂMETROS - SEMPRE POR ÚLTIMO) ---
-// O Express vai tentar encaixar qualquer coisa aqui. Se "/listar" estivesse abaixo,
-// ele cairia aqui e daria o erro de integer.
+// --- 3. ROTAS DINÂMICAS ---
 router.get("/:id", fornecedorController.buscarDetalhesFornecedor);
-
-// Rota DELETE
 router.delete("/:id", fornecedorController.excluirFornecedor);
-
-// Rota PUT
 router.put(
   "/:id",
   upload.single("arquivo"),
   fornecedorController.atualizarFornecedor
 );
 
-module.exports = router;
+export default router;

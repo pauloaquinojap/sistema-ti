@@ -1,7 +1,8 @@
-const pool = require("../config/db");
+import { Request, Response } from "express";
+import pool from "../config/db";
 
 // --- 1. FUNÇÃO CADASTRAR LINK DE INTERNET (POST) ---
-const cadastrarInternet = async (req, res) => {
+export const cadastrarInternet = async (req: Request, res: Response) => {
   const {
     cnpj_provedor,
     razao_social,
@@ -38,7 +39,7 @@ const cadastrarInternet = async (req, res) => {
       mensagem: "Link de Internet cadastrado com sucesso!",
       link: result.rows[0],
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao cadastrar link de internet:", error.message);
     res.status(500).json({
       mensagem: "Erro ao cadastrar link de internet no banco de dados.",
@@ -48,7 +49,7 @@ const cadastrarInternet = async (req, res) => {
 };
 
 // --- 2. FUNÇÃO LISTAR LINKS ATIVOS (GET) ---
-const listarInternetAtiva = async (req, res) => {
+export const listarInternetAtiva = async (req: Request, res: Response) => {
   try {
     const result = await pool.query(
       "SELECT * FROM internet WHERE status = 'ATIVA' ORDER BY razao_social ASC"
@@ -58,7 +59,7 @@ const listarInternetAtiva = async (req, res) => {
       total: result.rowCount,
       links: result.rows,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao listar internet ativa:", error.message);
     res.status(500).json({
       mensagem: "Erro ao buscar links de internet ativos.",
@@ -68,10 +69,9 @@ const listarInternetAtiva = async (req, res) => {
 };
 
 // --- 3. FUNÇÃO BUSCAR HISTÓRICO PARA O GRÁFICO (GET) ---
-const buscarHistorico = async (req, res) => {
+export const buscarHistorico = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    // Buscamos 21 registros para poder calcular a diferença entre eles e ter 20 pontos de velocidade
     const result = await pool.query(
       `SELECT download_bytes, upload_bytes, data_leitura 
        FROM historico_trafego 
@@ -81,22 +81,25 @@ const buscarHistorico = async (req, res) => {
     );
 
     const rows = result.rows.reverse();
-    const dadosCalculados = [];
+    const dadosCalculados: any[] = [];
 
-    // Cálculo da velocidade: (Atual - Anterior) * 8 bits / tempo / 1024 / 1024
     for (let i = 1; i < rows.length; i++) {
-      const tempoSegundos =
-        (new Date(rows[i].data_leitura) - new Date(rows[i - 1].data_leitura)) /
-        1000;
+      const dataAtual = new Date(rows[i].data_leitura).getTime();
+      const dataAnterior = new Date(rows[i - 1].data_leitura).getTime();
+      const tempoSegundos = (dataAtual - dataAnterior) / 1000;
 
       if (tempoSegundos > 0) {
         const downloadMbps = (
-          ((rows[i].download_bytes - rows[i - 1].download_bytes) * 8) /
+          ((Number(rows[i].download_bytes) -
+            Number(rows[i - 1].download_bytes)) *
+            8) /
           tempoSegundos /
           (1024 * 1024)
         ).toFixed(2);
+
         const uploadMbps = (
-          ((rows[i].upload_bytes - rows[i - 1].upload_bytes) * 8) /
+          ((Number(rows[i].upload_bytes) - Number(rows[i - 1].upload_bytes)) *
+            8) /
           tempoSegundos /
           (1024 * 1024)
         ).toFixed(2);
@@ -110,14 +113,8 @@ const buscarHistorico = async (req, res) => {
     }
 
     res.status(200).json(dadosCalculados);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao buscar histórico:", error.message);
     res.status(500).json({ mensagem: "Erro ao buscar dados do gráfico." });
   }
-};
-
-module.exports = {
-  cadastrarInternet,
-  listarInternetAtiva,
-  buscarHistorico,
 };

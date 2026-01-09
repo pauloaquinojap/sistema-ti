@@ -1,6 +1,7 @@
-const express = require("express");
-const router = express.Router();
-const relatorioController = require("../controllers/relatorioController");
+import { Router } from "express";
+import * as relatorioController from "../controllers/relatoriocController";
+
+const router: Router = Router();
 
 // Rota para pegar as opções dos selects
 router.get("/opcoes", relatorioController.getOpcoesFiltros);
@@ -11,4 +12,4 @@ router.post("/inventario-geral", relatorioController.gerarRelatorioInventario);
 // Rota POST para enviar os filtros e receber os dados de manuntenção
 router.post("/manutencao", relatorioController.gerarRelatorioManutencao);
 
-module.exports = router;
+export default router;

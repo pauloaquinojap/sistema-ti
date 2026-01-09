@@ -1,10 +1,11 @@
-const pool = require("../config/db");
+import { Request, Response } from "express";
+import pool from "../config/db";
 
 // --- 1. FUNÇÃO CALCULAR CUSTOS FINANCEIROS (GET) ---
-const calcularResumoFinanceiro = async (req, res) => {
+export const calcularResumoFinanceiro = async (req: Request, res: Response) => {
   const hoje = new Date();
-  const mes = parseInt(req.query.mes) || hoje.getMonth() + 1;
-  const ano = parseInt(req.query.ano) || hoje.getFullYear();
+  const mes = parseInt(req.query.mes as string) || hoje.getMonth() + 1;
+  const ano = parseInt(req.query.ano as string) || hoje.getFullYear();
 
   const dataFiltroInicio = `${ano}-${mes.toString().padStart(2, "0")}-01`;
 
@@ -15,7 +16,7 @@ const calcularResumoFinanceiro = async (req, res) => {
     .padStart(2, "0")}-01`;
 
   try {
-    // CUSTO DE LOCAÇÃO (Mensal: itens cadastrados antes ou no mês filtrado)
+    // CUSTO DE LOCAÇÃO
     const locacaoQuery = `
             SELECT COALESCE(SUM(valor), 0)::numeric(10, 2) AS custo_locacao
             FROM equipamentos  
@@ -25,7 +26,7 @@ const calcularResumoFinanceiro = async (req, res) => {
         `;
     const locacaoResult = await pool.query(locacaoQuery, [dataFiltroFim]);
 
-    // CUSTO DE COMPRA (Mensal: itens COMPRADOS DENTRO DO MÊS FILTRADO)
+    // CUSTO DE COMPRA
     const compraQuery = `
             SELECT COALESCE(SUM(valor), 0)::numeric(10, 2) AS custo_compra
             FROM equipamentos  
@@ -38,7 +39,7 @@ const calcularResumoFinanceiro = async (req, res) => {
       dataFiltroFim,
     ]);
 
-    // CUSTO DE INTERNET (Mensal: links cadastrados antes ou no mês filtrado)
+    // CUSTO DE INTERNET
     const internetQuery = `
             SELECT COALESCE(SUM(valor_mensal), 0)::numeric(10, 2) AS custo_internet
             FROM internet
@@ -46,9 +47,6 @@ const calcularResumoFinanceiro = async (req, res) => {
             AND data_cadastro < $1
         `;
     const internetResult = await pool.query(internetQuery, [dataFiltroFim]);
-
-    // Aqui você adicionaria a consulta de CUSTO CONTRATOS se ela já estivesse implementada
-    // Por enquanto, mantenha o cálculo como nos exemplos anteriores
 
     const custoLocacao = parseFloat(locacaoResult.rows[0].custo_locacao);
     const custoCompra = parseFloat(compraResult.rows[0].custo_compra);
@@ -59,14 +57,13 @@ const calcularResumoFinanceiro = async (req, res) => {
       mensagem: `Resumo financeiro para o mês ${mes}/${ano} calculado com sucesso!`,
       dados: {
         custo_locacao: custoLocacao.toFixed(2),
-        custo_compra: custoCompra.toFixed(2), // Agora mensal
+        custo_compra: custoCompra.toFixed(2),
         custo_internet: custoInternet.toFixed(2),
         custo_mensal_total: custoTotalMensal.toFixed(2),
-        // CUSTO CONTRATOS (Placeholder, ajustar quando a tabela for usada)
         custo_contratos: "0.00",
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao calcular resumo financeiro:", error.message);
     res.status(500).json({
       mensagem: "Erro ao calcular resumo financeiro.",
@@ -76,7 +73,10 @@ const calcularResumoFinanceiro = async (req, res) => {
 };
 
 // --- 2. FUNÇÃO CONTAR EQUIPAMENTOS POR TIPO (GET) ---
-const contarEquipamentosPorTipo = async (req, res) => {
+export const contarEquipamentosPorTipo = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const query = `
             SELECT 
@@ -89,7 +89,7 @@ const contarEquipamentosPorTipo = async (req, res) => {
         `;
     const result = await pool.query(query);
 
-    const resumo = result.rows.reduce((acc, row) => {
+    const resumo: { [key: string]: number } = result.rows.reduce((acc, row) => {
       acc[row.tipo_equipamento.toLowerCase().replace(/[^a-z0-9]/g, "_")] =
         row.total;
       return acc;
@@ -104,40 +104,28 @@ const contarEquipamentosPorTipo = async (req, res) => {
     ];
     let totalOutros = 0;
 
-    // Inicializa os tipos padrão e soma os outros
     tiposPadrao.forEach((tipo) => {
-      if (resumo[tipo]) {
-        // Já existe, não faz nada
-      } else {
-        resumo[tipo] = 0; // Inicializa em zero
-      }
+      if (!resumo[tipo]) resumo[tipo] = 0;
     });
 
-    // Soma o que não for tipo padrão
     Object.keys(resumo).forEach((key) => {
       if (!tiposPadrao.includes(key) && resumo[key] > 0) {
         totalOutros += resumo[key];
-        delete resumo[key]; // Opcional: remover a chave não padrão
+        delete resumo[key];
       }
     });
 
-    // Adiciona a soma dos outros no campo servidor (ou pode criar 'outros')
     resumo.servidor += totalOutros;
 
     res.status(200).json({
       mensagem: "Resumo de equipamentos por tipo calculado com sucesso!",
       dados: resumo,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao contar equipamentos:", error.message);
     res.status(500).json({
       mensagem: "Erro ao contar equipamentos.",
       detalhe: error.message,
     });
   }
-};
-
-module.exports = {
-  calcularResumoFinanceiro,
-  contarEquipamentosPorTipo,
 };

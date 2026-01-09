@@ -1,6 +1,7 @@
-const express = require("express");
-const router = express.Router();
-const estacoesController = require("../controllers/estacoesController");
+import { Router } from "express";
+import * as estacoesController from "../controllers/estacoesController";
+
+const router: Router = Router();
 
 // Listar todos os itens (Bases e Equipamentos)
 router.get("/", estacoesController.listarBases);
@@ -17,7 +18,7 @@ router.post("/vincular", estacoesController.vincularEquipamento);
 // Remover um item (Clique direito)
 router.delete("/excluir/:id", estacoesController.excluirItem);
 
-// --- NOVAS ROTAS PARA CABOS ---
+// --- ROTAS PARA CABOS ---
 
 // Salvar uma nova conexão de cabo
 router.post("/conectar", estacoesController.salvarConexao);
@@ -25,4 +26,4 @@ router.post("/conectar", estacoesController.salvarConexao);
 // Listar todas as conexões (para persistência ao atualizar a página)
 router.get("/conexoes", estacoesController.listarConexoes);
 
-module.exports = router;
+export default router;
