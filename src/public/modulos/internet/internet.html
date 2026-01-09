@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro de Internet - Sistema de TI</title>
+    <link rel="stylesheet" href="../../assets/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Painel de Controle de TI</h1>
+    </header>
+
+    <main>
+      <nav class="sidebar">
+        <h2>Módulos</h2>
+        <ul>
+          <li><a href="../../index.html">Dashboard Financeiro</a></li>
+          <li><a href="../inventario/inventario.html">Inventário de TI</a></li>
+          <li><a href="../contrato/contrato.html">Gestão de Contratos</a></li>
+          <li><a href="../fornecedor/fornecedor.html">Fornecedores</a></li>
+          <li><a href="internet.html" class="active">Links de Internet</a></li>
+        </ul>
+      </nav>
+
+      <section class="content">
+        <div class="module-content">
+          <h2>🔗 Cadastro de Link de Internet</h2>
+          <div id="feedback-message" class="hidden"></div>
+          <form id="cadastro-internet-form" class="form-grid">
+            <label for="cnpj_provedor">CNPJ do Provedor:</label>
+            <input
+              type="text"
+              id="cnpj_provedor"
+              name="cnpj_provedor"
+              required
+            />
+            <label for="razao_social">Razão Social do Provedor:</label>
+            <input type="text" id="razao_social" name="razao_social" required />
+            <label for="qtd_mb">Quantidade (Mb/s):</label>
+            <input type="number" id="qtd_mb" name="qtd_mb" required />
+
+            <label for="ip_monitoramento">IP do MikroTik:</label>
+            <input
+              type="text"
+              id="ip_monitoramento"
+              name="ip_monitoramento"
+              placeholder="Ex: 192.168.1.254"
+              required
+            />
+
+            <label for="snmp_community">Comunidade SNMP:</label>
+            <input
+              type="text"
+              id="snmp_community"
+              name="snmp_community"
+              value="public"
+              required
+            />
+
+            <label for="dedicado">Link Dedicado?</label>
+            <select id="dedicado" name="dedicado" required>
+              <option value="false">Não</option>
+              <option value="true">Sim</option>
+            </select>
+            <label for="valor_mensal">Valor Mensal (R$):</label>
+            <input
+              type="number"
+              id="valor_mensal"
+              name="valor_mensal"
+              step="0.01"
+              value="0.00"
+              required
+            />
+            <button type="submit" class="btn-submit" style="grid-column: 1 / 3">
+              Cadastrar e Monitorar Link
+            </button>
+          </form>
+
+          <hr style="margin: 40px 0" />
+          <h2>📊 Monitoramento em Tempo Real</h2>
+          <div id="lista-monitoramento">
+            <p>Carregando links ativos...</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Sistema de Gestão de TI</p>
+    </footer>
+
+    <script src="./internet.js"></script>
+  </body>
+</html>

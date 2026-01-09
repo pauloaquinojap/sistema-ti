@@ -1,0 +1,1337 @@
+/* RESET BÁSICO */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; /* Fonte mais moderna */
+}
+
+/* Paleta de Cores Sugerida (Suave e Profissional) */
+:root {
+  --primary-color: #4a90e2; /* Azul principal mais suave */
+  --primary-dark: #357abd;
+  --secondary-color: #ffc947; /* Amarelo/Dourado */
+  --success-color: #6dd5ed; /* Ciano suave para sucesso */
+  --danger-color: #ff6b6b; /* Vermelho suave para erro/delete */
+  --default-color: #b0bec5; /* Cinza suave */
+  --background-light: #f8f9fa; /* Fundo principal muito claro */
+  --background-card: #ffffff;
+  --text-color: #3c4a5a; /* Texto mais escuro e profissional */
+  --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.08); /* Sombra mais espessa e suave */
+  --border-radius-base: 8px;
+}
+
+body {
+  background-color: var(--background-light); /* Usando variável */
+  color: var(--text-color); /* Usando variável */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  line-height: 1.6; /* Melhoria de leitura */
+}
+
+/* HEADER - BARRA AZUL SUPERIOR */
+header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* MAIN - CONTEÚDO PRINCIPAL (MENU + CONTEÚDO) */
+main {
+  display: flex;
+  flex: 1;
+}
+
+/* CONTENT - ÁREA DOS MÓDULOS (Eu chamei de .content no seu código, mas o HTML usa .main-content) */
+.main-content {
+  flex: 1;
+  padding: 30px;
+}
+
+/* SIDEBAR - MENU LATERAL */
+.sidebar {
+  width: 250px;
+  background-color: #343a40;
+  color: white;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h2 {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #495057;
+  padding-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0; /* Ajustado */
+}
+
+.sidebar li {
+  margin-bottom: 10px;
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  padding: 10px 15px;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar a:hover {
+  background-color: var(--primary-color); /* Usando variável */
+}
+
+.sidebar a.active {
+  background-color: var(--primary-color); /* Usando variável */
+  font-weight: bold;
+  color: #fff;
+}
+
+/* CONTENT - ÁREA DOS MÓDULOS (Originalmente .content) */
+.content {
+  flex: 1;
+  padding: 30px;
+}
+
+.module-content {
+  background-color: var(--background-card); /* Usando variável */
+  padding: 30px; /* Aumentado o padding */
+  border-radius: 12px; /* Bordas mais arredondadas */
+  box-shadow: var(--shadow-soft); /* Sombra suave */
+  margin-bottom: 30px;
+}
+
+.module-content h2 {
+  color: var(--primary-color); /* Usando variável */
+  border-bottom: 2px solid var(--primary-color); /* Usando variável */
+  padding-bottom: 12px;
+  margin-bottom: 25px;
+}
+
+/* DASHBOARD CARDS */
+.finance-cards {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.card {
+  flex: 1;
+  padding: 20px;
+  border-radius: 10px; /* Mais arredondado */
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra mais proeminente */
+  min-width: 200px;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px); /* Efeito de elevação sutil */
+}
+
+.card h3 {
+  font-size: 1.1em;
+  margin-bottom: 10px;
+}
+
+.card p {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+/* Cores específicas dos cards */
+.card.total {
+  background-color: var(--primary-color);
+}
+.card.locacao {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+}
+.card.contratos {
+  background-color: var(--danger-color);
+}
+.card.internet {
+  background-color: var(--success-color);
+}
+
+/* FORMULÁRIO DE GRID GERAL (Mantido original, mas com transição no input) */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-grid label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  grid-column: span 1;
+}
+
+.form-grid input[type="text"],
+.form-grid input[type="email"],
+.form-grid input[type="number"],
+.form-grid input[type="date"],
+.form-grid select,
+.form-grid textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px; /* Mais suave */
+  box-sizing: border-box;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-grid input:focus,
+.form-grid select:focus,
+.form-grid textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+  outline: none;
+}
+
+.form-grid textarea {
+  resize: vertical;
+}
+
+.btn-submit {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px; /* Mais suave */
+  cursor: pointer;
+  font-size: 1em;
+  grid-column: 1 / 3;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  font-weight: 600;
+}
+
+.btn-submit:hover {
+  background-color: var(--primary-dark);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* FEEDBACK MESSAGE */
+.success {
+  background-color: #e0f7fa;
+  color: #00838f;
+  padding: 12px;
+  border: 1px solid #b2ebf2;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.error {
+  background-color: #ffebee;
+  color: #d32f2f;
+  padding: 12px;
+  border: 1px solid #ffcdd2;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* TABELAS (Ajustadas para o novo padrão de cores e bordas) */
+table {
+  width: 100%;
+  border-collapse: separate; /* Permite border-radius */
+  border-spacing: 0;
+  margin-top: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+table th,
+table td {
+  border: none; /* Remove bordas internas sólidas */
+  border-bottom: 1px solid #f0f0f0; /* Borda inferior clara */
+  padding: 14px 12px;
+  text-align: left;
+}
+
+table th {
+  background-color: #f8f8f8;
+  font-weight: 600;
+  color: var(--text-color);
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #fcfcfc;
+}
+
+table tbody tr:hover {
+  background-color: #f3f3f3;
+}
+table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* FOOTER */
+footer {
+  background-color: #343a40;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  font-size: 0.9em;
+}
+
+/* --- ESTILO PARA BOTÃO DE EXCLUSÃO --- */
+.btn-delete {
+  background-color: var(--danger-color);
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.3s, transform 0.1s;
+}
+
+.btn-delete:hover {
+  background-color: #d64545;
+  transform: translateY(-1px);
+}
+
+/* --- Estilos para os novos botões de Ação na Tabela --- */
+.btn-default {
+  background-color: var(--default-color);
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.3s, transform 0.1s;
+  margin-right: 5px;
+}
+
+.btn-default:hover {
+  background-color: #90a4ae;
+  transform: translateY(-1px);
+}
+
+.btn-transfer {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.3s, transform 0.1s;
+  margin-right: 5px;
+  font-weight: 600;
+}
+
+.btn-transfer:hover {
+  background-color: #ffb300;
+  transform: translateY(-1px);
+}
+
+/* ======================================= */
+/* --- MELHORIAS NO MODAL DE DETALHES (Seção 1 de 2) --- */
+/* ======================================= */
+
+/* --- ESTILOS PARA POP-UP (MODAL) --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Opacidade mais suave */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay:not(.hidden) {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background-color: var(--background-card);
+  padding: 30px; /* Mais padding para respiro */
+  border-radius: 12px; /* Bordas suaves */
+  width: 90%;
+  max-width: 800px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-soft); /* Sombra suave */
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay:not(.hidden) .modal-content {
+  transform: scale(1);
+}
+
+/* NOVO: ESTILO AJUSTADO PARA O BOTÃO DE FECHAR (X) */
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 30px;
+  color: #aaa;
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s ease;
+  z-index: 1001;
+}
+
+.close-btn:hover {
+  color: var(--danger-color);
+}
+
+/* 1. Estilo para a Linha Clicável */
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.clickable-row:hover {
+  background-color: #f0f0f0;
+}
+
+/* 2. Estilo para o Modal Grande (large-modal) */
+.modal-content.large-modal {
+  max-width: 900px; /* Aumenta a largura do pop-up */
+  width: 90%;
+}
+
+/* 3. Estilo para as Abas (Tabs) - MAIOR MUDANÇA VISUAL AQUI */
+.tabs-container {
+  margin-top: 20px;
+}
+.tabs-header {
+  display: flex;
+  border-bottom: 2px solid #e0e0e0; /* Borda mais clara */
+  margin-bottom: 15px;
+  overflow-x: auto;
+}
+.tab-button {
+  background-color: transparent; /* Fundo transparente para visual limpo */
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 12px 20px; /* Mais padding */
+  transition: 0.3s;
+  font-size: 16px;
+  margin-right: 5px;
+  border-radius: 6px 6px 0 0;
+  white-space: nowrap;
+  color: #666;
+  font-weight: 500;
+}
+.tab-button:hover {
+  color: var(--primary-color);
+  background-color: #f7f7f7;
+}
+.tab-button.active {
+  background-color: var(--background-card);
+  border-bottom: 3px solid var(--primary-color); /* Borda destacada */
+  color: var(--primary-color);
+  font-weight: 600;
+}
+.tab-content {
+  display: none;
+  padding: 6px 0;
+}
+.tab-content.active {
+  display: block;
+}
+
+/* 4. Estilo para a Tabela de Detalhes no Pop-up - MAIOR MUDANÇA AQUI */
+.details-table {
+  width: 100%;
+  border-collapse: separate; /* Permite cantos suaves */
+  border-spacing: 0;
+  font-size: 0.95em;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px; /* Bordas arredondadas */
+}
+.details-table th,
+.details-table td {
+  padding: 12px 15px; /* Mais respiro */
+  text-align: left;
+  border-bottom: 1px dashed #f0f0f0; /* Borda tracejada e suave */
+}
+.details-table th {
+  width: 25%; /* Ajusta a largura da label para acomodar melhor */
+  font-weight: 600;
+  background-color: #f8f8f8; /* Fundo claro para a label */
+  color: var(--text-color);
+}
+.details-table tr:last-child th,
+.details-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* 5. Estilo para Botões de Ação */
+.action-buttons-details {
+  margin-top: 25px;
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+}
+
+/* 6. Estilo da Lista de Histórico - MAIOR MUDANÇA VISUAL AQUI */
+.history-list {
+  list-style: none;
+  padding: 0;
+}
+.history-list li {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 10px;
+  padding: 15px; /* Mais padding */
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Sombra suave */
+}
+.history-list li strong {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--primary-dark);
+  font-size: 1.05em;
+  font-weight: 600;
+}
+.history-list p {
+  margin: 5px 0;
+  font-size: 0.9em;
+}
+.history-user {
+  font-style: italic;
+  color: #999;
+  font-size: 0.8em;
+  margin-top: 8px;
+  display: block;
+}
+.anexo-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+.anexo-list li {
+  margin-bottom: 5px;
+  border-bottom: 1px dotted #d0d0d0;
+  padding-bottom: 3px;
+}
+.anexo-list a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+.limit-reached {
+  color: var(--danger-color);
+  font-weight: bold;
+}
+
+/* --- NOVO: ESTILOS PARA O CONTROLE DE FILTRO (INVENTARIO.HTML) --- */
+.filter-controls {
+  margin-bottom: 25px;
+  padding: 20px;
+  background-color: var(--background-card);
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.filter-controls h3 {
+  font-size: 1.1em;
+  color: var(--primary-dark);
+  margin-bottom: 15px;
+  border-bottom: 1px dashed #e0e0e0;
+  padding-bottom: 5px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.filter-row input {
+  flex: 1;
+  min-width: 180px;
+  padding: 10px;
+  border: 1px solid #d0d0d0;
+  border-radius: 5px;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.filter-row input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+/* --- Melhorias no Botão Principal --- */
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: 600;
+  transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(74, 144, 226, 0.4);
+}
+
+/* --- MELHORIAS E AJUSTES PARA O NOVO LAYOUT DA MODAL DE CADASTRO --- */
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-grid-cadastro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 30px;
+  margin-top: 20px;
+}
+
+.form-group-full {
+  grid-column: 1 / span 2;
+}
+
+.form-grid-cadastro h4 {
+  margin-top: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+  color: var(--primary-dark);
+  font-weight: 600;
+  font-size: 1em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.form-grid-cadastro .btn-submit {
+  width: 100%;
+  padding: 14px 20px;
+  grid-column: 1 / span 2;
+  margin-top: 15px;
+}
+
+.form-grid-cadastro input[type="text"],
+.form-grid-cadastro input[type="email"],
+.form-grid-cadastro input[type="date"],
+.form-grid-cadastro select,
+.form-grid-cadastro textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* ======================================= */
+/* ESTILO DO INPUT DE ARQUIVO CUSTOMIZADO  */
+/* ======================================= */
+
+.file-input {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.file-upload-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  grid-column: 1 / span 2;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.custom-file-upload {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  background-color: #6c757d;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+}
+
+.custom-file-upload:hover {
+  background-color: #5a6268;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.file-icon {
+  font-size: 1.2em;
+  margin-right: 8px;
+  line-height: 1;
+}
+
+#file-name {
+  font-size: 0.95em;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+  padding: 5px 0;
+}
+
+/* ======================================= */
+/* --- MEDIA QUERIES (RESPONSIVIDADE) --- */
+/* ======================================= */
+
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .main-content {
+    padding: 15px;
+  }
+
+  main {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    padding: 15px 0;
+    display: none;
+  }
+
+  .finance-cards {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .card {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .filter-row {
+    flex-direction: column;
+  }
+
+  .filter-row input {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .module-content {
+    padding: 15px;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  table {
+    min-width: 700px;
+  }
+
+  table th,
+  table td {
+    padding: 8px;
+    font-size: 0.9em;
+  }
+
+  .modal-content {
+    width: 95%;
+    max-width: 95%;
+    padding: 20px;
+    margin: 15px;
+  }
+
+  .form-grid-cadastro {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .form-group-full,
+  .form-grid-cadastro .btn-submit,
+  .file-upload-container {
+    grid-column: 1 / 1;
+  }
+
+  .file-upload-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  #file-name {
+    max-width: 100%;
+  }
+
+  /* 8. Modal de Detalhes (Table) - AJUSTE RESPONSIVO SUAVE */
+  .details-table {
+    font-size: 0.85em;
+    border: none;
+    border-radius: 0;
+  }
+
+  .details-table th,
+  .details-table td {
+    display: block;
+    width: 100%;
+    padding: 5px 0;
+    border-bottom: none;
+  }
+
+  .details-table tr {
+    margin-bottom: 10px;
+    display: block;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #e0e0e0;
+  }
+  .details-table tr:last-child {
+    border-bottom: none;
+  }
+
+  .details-table th {
+    background-color: transparent;
+    color: var(--primary-dark);
+    padding-top: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9em;
+  }
+
+  .action-buttons-details {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .action-buttons-details button {
+    width: 100%;
+    margin-right: 0 !important;
+  }
+}
+
+/* ======================================================= */
+/* --- ESTILOS ESPECÍFICOS PARA O MÓDULO FORNECEDOR --- */
+/* ======================================================= */
+
+.radio-group-container {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.radio-group-container div {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.modal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: fixed;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.hidden {
+  display: none !important;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: auto;
+  padding: 25px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 900px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.close-modal {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+  top: 15px;
+}
+
+.close-modal:hover,
+.close-modal:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ======================================= */
+/* --- SEARCH CONTAINER (ATUALIZADO) --- */
+/* ======================================= */
+.search-container {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius-base);
+  padding: 5px 15px;
+  width: 100%;
+  max-width: 400px;
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.search-container:focus-within {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.search-container input {
+  border: none;
+  outline: none;
+  padding: 8px;
+  width: 100%;
+  font-size: 0.95em;
+  color: var(--text-color);
+}
+
+.search-container .search-icon {
+  color: #999;
+  font-size: 1.1em;
+  margin-right: 5px;
+}
+
+/* Garante que o conteúdo do modal tenha um fundo branco e não suma */
+.modal-content {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  max-width: 900px;
+  width: 80%;
+  transform: translateY(-20px);
+  transition: transform 0.3s ease;
+}
+
+.modal.hidden {
+  display: none !important;
+}
+
+/* Estilo do container de arquivo */
+.file-drop-area {
+  border: 2px dashed var(--primary-color);
+  padding: 15px;
+  border-radius: 8px;
+  background: #f9f9f9;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.file-drop-area:hover {
+  background: #f0f7ff;
+}
+
+#file-name-display {
+  font-weight: bold;
+  color: var(--text-color);
+  max-width: 200px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+/* Estilização dos dados no Modal de Detalhes */
+#detalhes-container strong {
+  display: block;
+  font-size: 0.85em;
+  color: #777;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+}
+
+#detalhes-container p {
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #eee;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+/* Garante que o modal de detalhes tenha rolagem se for muito grande */
+.modal-content {
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+/* Hover na linha da tabela para indicar que é clicável */
+#fornecedores-table-body tr:hover {
+  background-color: #f1f7ff;
+}
+
+/* Organização dos Detalhes */
+.detalhes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.info-box {
+  background: #fdfdfd;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  font-size: 0.9em;
+}
+
+.section-title {
+  font-size: 1em;
+  color: var(--primary-color);
+  border-left: 4px solid var(--primary-color);
+  padding-left: 10px;
+  margin: 20px 0 10px 0;
+  text-transform: uppercase;
+}
+
+/* Botões do Modal de Detalhes */
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.btn-edit {
+  background: #ffc107;
+  color: #000;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.btn-close {
+  background: #6c757d;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-descontinuar {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-edit:hover {
+  background: #e0a800;
+}
+.btn-close:hover {
+  background: #5a6268;
+}
+.btn-descontinuar:hover {
+  background: #c82333;
+}
+/* Container de Detalhes em Grid */
+.detalhes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.info-box {
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 5px;
+  border-left: 3px solid var(--primary-color);
+}
+
+.info-box strong {
+  display: block;
+  font-size: 0.8em;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.info-box p {
+  margin: 0;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.form-group-full.info-box-full {
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+  border-left: 3px solid #ccc;
+}
+
+/* Títulos de Seção no Modal */
+.section-title {
+  grid-column: span 2;
+  font-size: 1rem;
+  color: var(--primary-dark);
+  border-bottom: 1px solid #eee;
+  margin: 15px 0 5px 0;
+  padding-bottom: 5px;
+}
+
+/* Rodapé do Modal e Botões */
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.btn-edit {
+  background-color: #f0ad4e;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-edit:hover {
+  background-color: #ec971f;
+}
+
+.btn-secondary-outline {
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.status-toggle {
+  position: relative;
+  width: 160px;
+  height: 36px;
+  background: #e5e7eb;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #6b7280;
+  user-select: none;
+}
+
+.status-toggle span {
+  z-index: 2;
+  transition: color 0.3s;
+}
+
+.status-toggle .active {
+  color: #fff;
+}
+
+.status-toggle .slider {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 20px;
+  left: 0;
+  top: 0;
+  transition: all 0.3s ease;
+}
+
+.status-toggle.inativo .slider {
+  left: 50%;
+  background: #ef4444;
+}
+/* Remove setas de input number */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Linha Clicável */
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.clickable-row:hover {
+  background-color: #e3f2fd; /* Azul bem clarinho */
+}
+
+/* Filtros */
+.filter-controls {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+.filter-row {
+  display: flex;
+  gap: 10px;
+}
+.filter-row input,
+.filter-row select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  flex: 1;
+}
+
+.view-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.view-item {
+  font-size: 14px;
+  color: #444;
+}
+
+.view-item strong {
+  color: #111;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.status-badge.ativo {
+  background: #d4edda;
+  color: #155724;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.status-badge.inativo {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* --- ABAS (TABS) --- */
+.tabs-container {
+  margin-top: 15px;
+  border-bottom: 2px solid #ddd;
+}
+
+.tabs-header {
+  display: flex;
+  gap: 5px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  border: none;
+  background: #f1f1f1;
+  cursor: pointer;
+  border-radius: 5px 5px 0 0;
+  font-weight: bold;
+  color: #555;
+  transition: 0.3s;
+}
+
+.tab-button:hover {
+  background: #e9e9e9;
+}
+
+.tab-button.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+.tab-content {
+  display: none;
+  padding: 20px 0;
+  animation: fadeEffect 0.5s;
+}
+
+@keyframes fadeEffect {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* --- HISTÓRICO LISTA --- */
+.interactive-table th {
+  background-color: #f4f4f4;
+  color: #333;
+}

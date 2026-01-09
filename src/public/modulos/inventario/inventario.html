@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventário de TI</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="inventario.css" />
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <nav class="sidebar">
+        <div class="sidebar-header">
+          <i class="fa-solid fa-layer-group"></i>
+          <h2 class="sidebar-title">Módulos</h2>
+        </div>
+        <ul>
+          <li>
+            <a href="../../index.html"
+              ><i class="fa-solid fa-chart-pie"></i
+              ><span>Dashboard Financeiro</span></a
+            >
+          </li>
+          <li>
+            <a href="inventario.html" class="active"
+              ><i class="fa-solid fa-computer"></i
+              ><span>Inventário de TI</span></a
+            >
+          </li>
+          <li>
+            <a href="../contrato/contrato.html"
+              ><i class="fa-solid fa-file-contract"></i
+              ><span>Gestão de Contratos</span></a
+            >
+          </li>
+          <li>
+            <a href="../fornecedor/fornecedor.html"
+              ><i class="fa-solid fa-truck-fast"></i
+              ><span>Fornecedores</span></a
+            >
+          </li>
+          <li>
+            <a href="../internet/internet.html"
+              ><i class="fa-solid fa-wifi"></i><span>Links de Internet</span></a
+            >
+          </li>
+          <li>
+            <a href="../estacoes/estacoes.html">
+              <i class="fa-solid fa-network-wired"></i>
+              <span>Estações de Trabalho</span>
+            </a>
+          </li>
+          <li>
+            <a href="../relatorio/relatorio.html"
+              ><i class="fa-solid fa-clipboard-list"></i
+              ><span>Relatórios</span></a
+            >
+          </li>
+        </ul>
+      </nav>
+
+      <section class="content">
+        <div class="module-content">
+          <div class="header-actions">
+            <h2>Inventário de TI</h2>
+            <button class="btn-primary" onclick="openCadastroModal()">
+              <i class="fa-solid fa-plus"></i> Novo Equipamento
+            </button>
+          </div>
+
+          <div class="filter-controls">
+            <h3><i class="fa-solid fa-filter"></i> Filtros de Pesquisa</h3>
+            <div class="filter-row">
+              <input
+                type="text"
+                id="filter-tipo"
+                placeholder="Tipo de Equipamento"
+                onkeyup="filterInventario()"
+              />
+              <input
+                type="text"
+                id="filter-serie"
+                placeholder="Nº Série"
+                onkeyup="filterInventario()"
+              />
+              <input
+                type="text"
+                id="filter-loja"
+                placeholder="Loja Atual"
+                onkeyup="filterInventario()"
+              />
+              <input
+                type="text"
+                id="filter-usuario"
+                placeholder="Usuário Atual"
+                onkeyup="filterInventario()"
+              />
+              <input
+                type="text"
+                id="filter-fornecedor"
+                placeholder="Empresa Responsável"
+                onkeyup="filterInventario()"
+              />
+            </div>
+          </div>
+
+          <div class="table-container">
+            <p id="feedback-message" class="hidden"></p>
+
+            <table id="inventario-table" class="data-table">
+              <thead>
+                <tr>
+                  <th>Tipo</th>
+                  <th>Modelo</th>
+                  <th>Nº Série</th>
+                  <th>Patrimônio</th>
+                  <th>Loja Atual</th>
+                  <th>Usuário Atual</th>
+                  <th>Empresa Responsável</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="7">Carregando inventário...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div
+      id="cadastro-modal"
+      class="modal-overlay hidden"
+      onclick="closeCadastroModal()"
+    >
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <button class="close-btn" onclick="closeCadastroModal()">
+          &times;
+        </button>
+        <h3>Novo Equipamento</h3>
+        <p id="feedback-modal-message" class="hidden"></p>
+
+        <form id="cadastro-equipamento-form">
+          <div class="form-grid-cadastro">
+            <div class="form-group-full"><h4>📝 Identificação</h4></div>
+            <div class="form-group">
+              <label for="tipo_equipamento">Tipo Equipamento:</label>
+              <select id="tipo_equipamento" name="tipo_equipamento" required>
+                <option value="NOTEBOOK">Notebook</option>
+                <option value="DESKTOP">Desktop</option>
+                <option value="MONITOR">Monitor</option>
+                <option value="IMPRESSORA">Impressora</option>
+                <option value="TECLADO">Teclado</option>
+                <option value="MOUSE">Mouse</option>
+                <option value="SWITCH">Swtich</option>
+                <option value="ROTEADOR">Roteador</option>
+                <option value="MODEM">Mordem</option>
+                <option value="TEF">TEF</option>
+                <option value="IMPRESSORA_TERMICA">Impressora Térmica</option>
+                <option value="OUTROS">Outros</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Modelo:</label><input type="text" name="modelo" required />
+            </div>
+            <div class="form-group">
+              <label>Nº Série:</label
+              ><input type="text" name="numero_serie" required />
+            </div>
+            <div class="form-group">
+              <label>Nº Patrimônio:</label
+              ><input type="text" name="patrimonio" />
+            </div>
+            <div class="form-group-full">
+              <label>Configurações:</label
+              ><textarea
+                name="configuracao"
+                rows="2"
+                placeholder="Ex: i5, 8GB RAM..."
+              ></textarea>
+            </div>
+
+            <div class="form-group-full"><h4>💰 Aquisição</h4></div>
+            <div class="form-group">
+              <label>Tipo Aquisição:</label>
+              <select
+                id="tipo_aquisicao"
+                name="tipo_aquisicao"
+                onchange="toggleDataCompra()"
+              >
+                <option value="" disabled selected>-- Selecione --</option>
+                <option value="COMPRA">COMPRA</option>
+                <option value="LOCACAO">LOCAÇÃO</option>
+                <option value="COMODATO">COMODATO</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Empresa Responsável:</label
+              ><input type="text" name="empresa_responsavel" />
+            </div>
+            <div id="data-compra-field" class="form-group hidden">
+              <label>Data Compra:</label
+              ><input
+                type="date"
+                id="data_compra_frontend"
+                name="data_compra_frontend"
+              />
+            </div>
+            <div class="form-group">
+              <label>Valor (R$):</label
+              ><input
+                type="text"
+                id="valor"
+                name="valor"
+                value="0,00"
+                onkeyup="formatCurrency(this)"
+              />
+            </div>
+
+            <div class="form-group-full">
+              <label>Anexo (NF/Termo):</label>
+              <input
+                type="file"
+                id="anexo"
+                name="anexo"
+                accept=".pdf,.png,.jpg,.jpeg"
+              />
+            </div>
+
+            <div class="form-group-full"><h4>📍 Localização</h4></div>
+            <div class="form-group">
+              <label>Loja/Setor:</label><input type="text" name="loja_atual" />
+            </div>
+            <div class="form-group">
+              <label>Usuário Atual:</label
+              ><input type="text" name="usuario_atual" />
+            </div>
+            <div class="form-group-full">
+              <label>Observações:</label
+              ><textarea name="observacoes" rows="2"></textarea>
+            </div>
+            <div class="form-group-full">
+              <button type="submit" class="btn-submit">
+                Cadastrar Equipamento
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="manutencao-modal" class="modal-overlay hidden">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <button class="close-btn" onclick="closeManutencaoModal()">
+          &times;
+        </button>
+        <h3>Upgrade / Manutenção</h3>
+        <p id="feedback-manutencao-message" class="hidden"></p>
+
+        <form id="manutencao-form">
+          <input type="hidden" id="manutencao-equipamento-id" />
+
+          <div class="form-group-full">
+            <label for="tipo_acao">Tipo de Ação:</label>
+            <select id="tipo_acao" onchange="toggleCamposDinamicos()" required>
+              <option value="" disabled selected>Selecione uma opção</option>
+              <option value="UPGRADE">Upgrade de Configuração</option>
+              <option value="MANUTENCAO">Registro de Manutenção</option>
+            </select>
+          </div>
+
+          <div id="campos-upgrade" class="hidden">
+            <div class="form-group-full" style="margin-top: 15px">
+              <label>Configuração Atual (Somente Leitura):</label>
+              <textarea
+                id="config-atual-display"
+                readonly
+                style="background-color: #f0f0f0; color: #666"
+              ></textarea>
+            </div>
+            <div class="form-group-full">
+              <label for="nova-config">Nova Configuração:</label>
+              <textarea
+                id="nova-config"
+                placeholder="Descreva a nova configuração completa"
+              ></textarea>
+            </div>
+          </div>
+
+          <div id="campos-manutencao" class="hidden">
+            <div class="form-grid-cadastro">
+              <div class="form-group">
+                <label for="motivo-manutencao">Motivo da Manutenção:</label>
+                <input
+                  type="text"
+                  id="motivo-manutencao"
+                  placeholder="Ex: Limpeza Preventiva, Troca de Pasta..."
+                />
+              </div>
+              <div id="campo-proxima-manutencao" class="form-group">
+                <label>Data da Próxima Manutenção:</label>
+                <input type="date" id="acao-data-proxima" name="dataProxima" />
+              </div>
+              <div class="form-group">
+                <label>Valor da Manutenção (R$):</label>
+                <input
+                  type="text"
+                  id="valor-manutencao-input"
+                  name="valor_manutencao"
+                  value="0,00"
+                  onkeyup="formatCurrency(this)"
+                />
+              </div>
+              <div class="form-group-full">
+                <label for="desc-manutencao">Descrição Detalhada:</label>
+                <textarea
+                  id="desc-manutencao"
+                  placeholder="O que foi feito no equipamento?"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group-full" style="margin-top: 20px">
+            <button type="submit" class="btn-submit">Salvar Alteração</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="edicao-modal" class="modal-overlay hidden">
+      <div class="modal-content large-modal" onclick="event.stopPropagation()">
+        <button class="close-btn" onclick="closeEditModal()">&times;</button>
+        <h3 id="edit-modal-title">Editar Equipamento</h3>
+        <p id="feedback-edit-message" class="hidden"></p>
+
+        <form id="edicao-form">
+          <input type="hidden" id="edit-equipamento-id" name="id" />
+          <div class="edit-transfer-grid">
+            <div class="form-group">
+              <label>Tipo:</label
+              ><select id="edit-tipo_equipamento" name="tipo_equipamento">
+                <option value="NOTEBOOK">Notebook</option>
+                <option value="DESKTOP">Desktop</option>
+                <option value="MONITOR">Monitor</option>
+                <option value="IMPRESSORA">Impressora</option>
+                <option value="TECLADO">Teclado</option>
+                <option value="MOUSE">Mouse</option>
+                <option value="SWITCH">Swtich</option>
+                <option value="ROTEADOR">Roteador</option>
+                <option value="MODEM">Mordem</option>
+                <option value="TEF">TEF</option>
+                <option value="IMPRESSORA_TERMICA">Impressora Térmica</option>
+                <option value="OUTROS">Outros</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Modelo:</label
+              ><input type="text" id="edit-modelo" name="modelo" required />
+            </div>
+            <div class="form-group">
+              <label>Patrimônio:</label
+              ><input type="text" id="edit-patrimonio" name="patrimonio" />
+            </div>
+            <div class="form-group">
+              <label>Série:</label
+              ><input type="text" id="edit-numero_serie" name="numero_serie" />
+            </div>
+            <div class="form-group">
+              <label>Empresa Resp.:</label
+              ><input
+                type="text"
+                id="edit-empresa_responsavel"
+                name="empresa_responsavel"
+              />
+            </div>
+            <div class="form-group">
+              <label>Aquisição:</label
+              ><select
+                id="edit-tipo_aquisicao"
+                name="tipo_aquisicao"
+                onchange="toggleDataCompra('edicao-modal')"
+              >
+                <option value="COMPRA">Compra</option>
+                <option value="LOCACAO">Locação</option>
+                <option value="COMODATO">Comodato</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Valor:</label
+              ><input
+                type="text"
+                id="edit-valor"
+                name="valor"
+                oninput="formatCurrency(this)"
+              />
+            </div>
+            <div class="form-group" id="edit-data-compra-field">
+              <label>Data Compra:</label
+              ><input
+                type="date"
+                id="edit-data_compra_frontend"
+                name="data_compra_frontend"
+              />
+            </div>
+            <div class="full-width">
+              <label>Observações:</label
+              ><textarea id="edit-observacoes" name="observacoes"></textarea>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">Salvar Dados Gerais</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="transferencia-modal" class="modal-overlay hidden">
+      <div class="modal-content large-modal" onclick="event.stopPropagation()">
+        <button class="close-btn" onclick="closeTransferModal()">
+          &times;
+        </button>
+        <h3 id="transfer-modal-title">Transferir Equipamento</h3>
+        <p id="feedback-transfer-message" class="hidden"></p>
+
+        <form id="transferencia-form">
+          <input type="hidden" id="transfer-equipamento-id" name="id" />
+          <div class="edit-transfer-grid">
+            <div class="form-group">
+              <label>Novo Usuário:</label
+              ><input
+                type="text"
+                id="transfer-usuario_atual"
+                name="usuario_atual"
+              />
+            </div>
+            <div class="form-group">
+              <label>Nova Loja/Setor:</label
+              ><input type="text" id="transfer-loja_atual" name="loja_atual" />
+            </div>
+            <div class="full-width">
+              <label>Motivo:</label
+              ><textarea
+                id="transfer-motivo"
+                name="motivo_transferencia"
+                required
+              ></textarea>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">
+            Registrar Transferência
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script src="inventario.js"></script>
+  </body>
+</html>

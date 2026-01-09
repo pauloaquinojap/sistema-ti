@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestão de Contratos - Sistema de TI</title>
+    <link rel="stylesheet" href="../../assets/style.css" />
+    <style>
+      /* Estilos para Abas de Navegação */
+      .tabs-nav {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #eee;
+      }
+      .tab-btn {
+        padding: 10px 20px;
+        cursor: pointer;
+        background: #f1f1f1;
+        border: none;
+        border-radius: 8px 8px 0 0;
+        font-weight: bold;
+        color: #666;
+        transition: 0.3s;
+      }
+      .tab-btn.active {
+        background: var(--primary-color);
+        color: white;
+      }
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
+
+      /* Estilos de Visualização */
+      .view-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+      .view-item {
+        font-size: 14px;
+        color: #444;
+      }
+      .view-item strong {
+        color: #111;
+        display: block;
+        margin-bottom: 2px;
+      }
+      .section-title {
+        margin: 20px 0 10px 0;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 5px;
+      }
+      .hidden-field {
+        display: none !important;
+      }
+
+      /* Estilo para linhas clicáveis na tabela */
+      .clickable-row {
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .clickable-row:hover {
+        background-color: #f0f7ff !important;
+      }
+
+      /* Correção do Toggle de Status */
+      .status-toggle-container {
+        width: 160px;
+        height: 38px;
+        position: relative;
+      }
+      .status-toggle-container input {
+        display: none;
+      }
+      .status-slider {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        background-color: #eee;
+        border-radius: 20px;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        position: relative;
+        font-size: 12px;
+        font-weight: bold;
+        color: #666;
+      }
+      .status-slider .ball {
+        position: absolute;
+        width: 75px;
+        height: 30px;
+        background-color: var(--primary-color);
+        border-radius: 18px;
+        top: 4px;
+        left: 4px;
+        transition: 0.3s;
+        z-index: 1;
+      }
+      .status-slider span {
+        z-index: 2;
+      }
+      #status-checkbox:not(:checked) + .status-slider .ball {
+        left: 81px;
+        background-color: var(--danger-color);
+      }
+      #status-checkbox:checked + .status-slider .label-ativo {
+        color: white;
+      }
+      #status-checkbox:not(:checked) + .status-slider .label-inativo {
+        color: white;
+      }
+
+      /* Estilo para o botão de anexo na tabela */
+      .btn-anexo {
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 4px 8px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      .btn-anexo:hover {
+        background: #bbdefb;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Painel de Controle de TI</h1>
+    </header>
+
+    <main>
+      <nav class="sidebar">
+        <h2>Módulos</h2>
+        <ul>
+          <li><a href="../../index.html">Dashboard Financeiro</a></li>
+          <li><a href="../inventario/inventario.html">Inventário de TI</a></li>
+          <li>
+            <a href="contrato.html" class="active">Gestão de Contratos</a>
+          </li>
+          <li><a href="../fornecedor/fornecedor.html">Fornecedores</a></li>
+          <li><a href="../internet/internet.html">Links de Internet</a></li>
+        </ul>
+      </nav>
+
+      <section class="content">
+        <div class="module-header">
+          <h2>📜 Gestão de Contratos</h2>
+          <button class="btn-primary" onclick="abrirModalCadastro()">
+            + Novo Contrato
+          </button>
+        </div>
+
+        <div class="filter-controls">
+          <h3>🔍 Filtros de Busca</h3>
+          <div class="filter-row">
+            <input
+              type="text"
+              id="filtro-numero"
+              placeholder="Filtrar por Nº Contrato..."
+              onkeyup="aplicarFiltros()"
+            />
+            <input
+              type="text"
+              id="filtro-empresa"
+              placeholder="Filtrar por Empresa..."
+              onkeyup="aplicarFiltros()"
+            />
+            <select id="filtro-tipo" onchange="aplicarFiltros()">
+              <option value="">Todos os Tipos</option>
+              <option value="Prestação de serviço">Prestação de serviço</option>
+              <option value="Fornecimento">Fornecimento</option>
+              <option value="Manutenção">Manutenção</option>
+              <option value="Link dedicado">Link dedicado</option>
+            </select>
+
+            <div class="status-toggle-container">
+              <input
+                type="checkbox"
+                id="status-checkbox"
+                checked
+                onchange="aplicarFiltros();"
+              />
+              <label for="status-checkbox" class="status-slider">
+                <span class="label-ativo">Ativos</span>
+                <span class="label-inativo">Inativos</span>
+                <div class="ball"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="interactive-table">
+            <thead>
+              <tr>
+                <th>Nº do Contrato</th>
+                <th>Tipo</th>
+                <th>Empresa Responsável</th>
+                <th>Vigência</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-contratos-corpo"></tbody>
+          </table>
+        </div>
+
+        <div id="modal-cadastro" class="modal">
+          <div class="modal-content modal-large">
+            <div class="modal-header">
+              <h3>📝 Novo Contrato</h3>
+              <span class="close-modal" onclick="fecharModais()">&times;</span>
+            </div>
+            <form id="form-cadastro-contrato" enctype="multipart/form-data">
+              <div class="form-grid">
+                <h4 class="section-title">Identificação</h4>
+                <input
+                  type="text"
+                  name="numero_contrato"
+                  placeholder="Nº Contrato"
+                  required
+                />
+                <select name="tipo_contrato" required>
+                  <option value="">Selecione o Tipo</option>
+                  <option value="Prestação de serviço">
+                    Prestação de serviço
+                  </option>
+                  <option value="Fornecimento">Fornecimento</option>
+                  <option value="Manutenção">Manutenção</option>
+                  <option value="Link dedicado">Link dedicado</option>
+                </select>
+
+                <h4 class="section-title">Partes Envolvidas</h4>
+                <select
+                  name="fornecedor_id"
+                  id="select-fornecedor"
+                  required
+                ></select>
+
+                <h4 class="section-title">Vigência</h4>
+                <div style="display: flex; gap: 10px">
+                  <div style="flex: 1">
+                    <label style="font-size: 0.8em">Data Início</label>
+                    <input
+                      type="date"
+                      name="data_inicio"
+                      id="cad-data-inicio"
+                      oninput="calcularDataFim()"
+                      required
+                    />
+                  </div>
+                  <div style="flex: 1">
+                    <label style="font-size: 0.8em">Prazo (Meses)</label>
+                    <input
+                      type="number"
+                      id="cad-prazo-meses"
+                      placeholder="Ex: 12"
+                      oninput="calcularDataFim()"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label style="font-size: 0.8em">Data Fim (Automático)</label>
+                  <input
+                    type="date"
+                    name="data_fim"
+                    id="cad-data-fim"
+                    required
+                    readonly
+                    style="background-color: #f0f0f0"
+                  />
+                </div>
+
+                <label class="checkbox-container" style="align-self: end">
+                  <input type="checkbox" name="renovacao_automatica" />
+                  Renovação Automática
+                </label>
+
+                <h4 class="section-title">Financeiro</h4>
+                <select
+                  name="forma_pagamento"
+                  id="cad-forma-pagamento"
+                  onchange="alternarCamposValor()"
+                  required
+                >
+                  <option value="Mensal">Mensal</option>
+                  <option value="Único">Único</option>
+                </select>
+                <input
+                  type="text"
+                  name="valor_mensal"
+                  id="cad-valor-mensal"
+                  placeholder="Valor Mensal (R$ 0,00)"
+                  oninput="mascaraMoeda(this)"
+                />
+                <input
+                  type="text"
+                  name="valor_contrato"
+                  id="cad-valor-total"
+                  class="hidden-field"
+                  placeholder="Valor Único (R$ 0,00)"
+                  oninput="mascaraMoeda(this)"
+                />
+                <input
+                  type="number"
+                  name="dia_vencimento"
+                  id="cad-dia-vencimento"
+                  placeholder="Dia Vencimento"
+                  min="1"
+                  max="31"
+                />
+
+                <h4 class="section-title">Anexos</h4>
+                <div class="file-upload-container">
+                  <label class="custom-file-upload">
+                    <input
+                      type="file"
+                      name="arquivo"
+                      class="file-input"
+                      id="arquivo-contrato"
+                    />
+                    📎 Anexar Contrato (PDF)
+                  </label>
+                  <span id="file-name-display">Nenhum arquivo selecionado</span>
+                </div>
+
+                <h4 class="section-title">Detalhes Extras</h4>
+                <textarea
+                  name="descricao"
+                  placeholder="Descrição"
+                  style="grid-column: span 2"
+                ></textarea>
+                <input
+                  type="text"
+                  name="gestor_contrato"
+                  placeholder="Gestor"
+                />
+                <input
+                  type="text"
+                  name="departamento"
+                  placeholder="Departamento"
+                />
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn-cancel"
+                  onclick="fecharModais()"
+                >
+                  Cancelar
+                </button>
+                <button type="submit" class="btn-save">
+                  💾 Salvar Contrato
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div id="modal-view" class="modal">
+          <div class="modal-content modal-large">
+            <span class="close-modal" onclick="fecharModais()">&times;</span>
+            <div class="modal-header">
+              <h3>📄 Contrato: <span id="view-numero-titulo"></span></h3>
+            </div>
+
+            <div class="tabs-nav">
+              <button
+                class="tab-btn active"
+                onclick="switchTab(event, 'tab-detalhes')"
+              >
+                DETALHES DO CONTRATO
+              </button>
+              <button
+                class="tab-btn"
+                onclick="switchTab(event, 'tab-historico')"
+              >
+                HISTÓRICO (ADITIVOS)
+              </button>
+            </div>
+
+            <div class="modal-body">
+              <div id="tab-detalhes" class="tab-content active">
+                <div id="view-detalhes-grid" class="view-grid"></div>
+              </div>
+
+              <div id="tab-historico" class="tab-content">
+                <div class="table-container">
+                  <table class="interactive-table" id="tabela-aditivos">
+                    <thead>
+                      <tr>
+                        <th>Tipo Registro</th>
+                        <th>Nº Documento</th>
+                        <th>Data</th>
+                        <th>Descrição / Resumo</th>
+                        <th>Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                id="btn-novo-aditivo-trigger"
+                class="btn-primary"
+                style="
+                  background-color: var(--secondary-color);
+                  color: #000;
+                  border: none;
+                "
+              >
+                + Novo Aditivo
+              </button>
+              <button
+                id="btn-excluir-contrato"
+                class="btn-cancel"
+                style="background-color: #666; color: white"
+              >
+                🗑️ Excluir
+              </button>
+
+              <button
+                id="btn-descontinuar-trigger"
+                class="btn-save"
+                style="background-color: var(--danger-color); border: none"
+              >
+                🛑 Descontinuar
+              </button>
+
+              <button
+                id="btn-reativar-trigger"
+                class="btn-save"
+                style="background-color: #28a745; border: none; display: none"
+              >
+                🔄 Reativar Contrato
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="modal-aditivo" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>➕ Registrar Aditivo</h3>
+              <span class="close-modal" onclick="fecharModais()">&times;</span>
+            </div>
+            <form id="form-cadastro-aditivo" enctype="multipart/form-data">
+              <input
+                type="hidden"
+                name="contrato_id"
+                id="aditivo-contrato-id"
+              />
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Contrato Ref.:</label>
+                  <input
+                    type="text"
+                    id="aditivo-contrato-numero"
+                    readonly
+                    style="background: #eee"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Nº do Aditivo:</label>
+                  <input
+                    type="text"
+                    name="numero_aditivo"
+                    placeholder="Ex: 001/2024"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Data Assinatura:</label>
+                  <input type="date" name="data_assinatura" required />
+                </div>
+                <div class="form-group">
+                  <label>Tipo de Aditivo:</label>
+                  <select name="tipo_aditivo" id="tipo_aditivo_select" required>
+                    <option value="">Selecione...</option>
+                    <option value="valor">Alteração de Valor</option>
+                    <option value="prazo">Alteração de Prazo (Vigência)</option>
+                    <option value="escopo">
+                      Alteração de Escopo / Cláusulas
+                    </option>
+                  </select>
+                </div>
+
+                <div
+                  id="container_dinamico_aditivo"
+                  style="
+                    grid-column: span 2;
+                    display: none;
+                    background: #f0f4f8;
+                    padding: 15px;
+                    border-radius: 8px;
+                  "
+                ></div>
+
+                <div class="form-group" style="grid-column: span 2">
+                  <label>Anexo do Aditivo (PDF):</label>
+                  <input type="file" name="arquivo" class="form-control" />
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn-cancel"
+                  onclick="fecharModais()"
+                >
+                  Cancelar
+                </button>
+                <button type="submit" class="btn-save">
+                  💾 Salvar Aditivo
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div id="modal-descontinuar" class="modal">
+          <div class="modal-content" style="max-width: 450px">
+            <div class="modal-header">
+              <h3>🛑 Encerrar Contrato</h3>
+              <span class="close-modal" onclick="fecharModais()">&times;</span>
+            </div>
+            <div style="padding: 20px">
+              <p>Informe a data de encerramento:</p>
+              <input
+                type="date"
+                id="data-descontinuacao-input"
+                class="form-control"
+                style="
+                  width: 100%;
+                  padding: 10px;
+                  margin-top: 10px;
+                  border: 1px solid #ccc;
+                  border-radius: 4px;
+                "
+              />
+            </div>
+            <div class="modal-footer">
+              <button class="btn-cancel" onclick="fecharModais()">
+                Cancelar
+              </button>
+              <button
+                class="btn-save"
+                style="background-color: var(--danger-color)"
+                onclick="executarDescontinuacao()"
+              >
+                Confirmar Encerramento
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          function switchTab(evt, tabId) {
+            const contents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < contents.length; i++)
+              contents[i].classList.remove("active");
+            const btns = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < btns.length; i++)
+              btns[i].classList.remove("active");
+            document.getElementById(tabId).classList.add("active");
+            if (evt) evt.currentTarget.classList.add("active");
+          }
+
+          function alternarCamposValor() {
+            const forma = document.getElementById("cad-forma-pagamento").value;
+            const campoMensal = document.getElementById("cad-valor-mensal");
+            const campoTotal = document.getElementById("cad-valor-total");
+            const campoVencimento =
+              document.getElementById("cad-dia-vencimento");
+
+            if (forma === "Mensal") {
+              campoMensal.classList.remove("hidden-field");
+              campoVencimento.classList.remove("hidden-field");
+              campoTotal.classList.add("hidden-field");
+              campoTotal.value = "";
+            } else {
+              campoTotal.classList.remove("hidden-field");
+              campoMensal.classList.add("hidden-field");
+              campoVencimento.classList.add("hidden-field");
+              campoMensal.value = "";
+            }
+          }
+        </script>
+      </section>
+    </main>
+    <script src="contrato.js"></script>
+  </body>
+</html>

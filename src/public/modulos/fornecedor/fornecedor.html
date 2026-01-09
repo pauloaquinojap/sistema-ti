@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestão de Fornecedores</title>
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Painel de Controle de TI</h1>
+    </header>
+
+    <main>
+      <nav class="sidebar">
+        <h2>Módulos</h2>
+        <ul>
+          <li><a href="../../index.html">Dashboard Financeiro</a></li>
+          <li><a href="../inventario/inventario.html">Inventário de TI</a></li>
+          <li><a href="../contrato/contrato.html">Gestão de Contratos</a></li>
+          <li><a href="fornecedor.html" class="active">Fornecedores</a></li>
+          <li><a href="../internet/internet.html">Links de Internet</a></li>
+        </ul>
+      </nav>
+
+      <section class="content">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+          "
+        >
+          <div style="display: flex; gap: 20px; align-items: center">
+            <button
+              id="btn-open-cadastro-modal"
+              class="btn-primary"
+              onclick="openCadastroModal()"
+            >
+              ➕ Cadastrar Novo Fornecedor
+            </button>
+
+            <div
+              class="status-toggle"
+              onclick="toggleStatusFiltro()"
+              id="status-toggle"
+            >
+              <span id="label-ativo" class="active">Ativos</span>
+              <span id="label-inativo">Inativos</span>
+              <div class="slider"></div>
+            </div>
+          </div>
+
+          <div class="search-container">
+            <input
+              type="text"
+              id="input-busca"
+              placeholder="🔍 Buscar por CNPJ ou Razão Social..."
+              style="
+                padding: 10px;
+                width: 300px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+              "
+            />
+          </div>
+        </div>
+
+        <div id="cadastroModal" class="modal hidden">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2 id="modal-titulo">➕ Cadastrar Novo Fornecedor</h2>
+              <span class="close-modal" onclick="closeCadastroModal()"
+                >&times;</span
+              >
+            </div>
+
+            <div id="feedback-modal-message" class="hidden"></div>
+
+            <form id="cadastro-fornecedor-form" class="form-grid-cadastro">
+              <input type="hidden" id="fornecedor-id" name="id" />
+
+              <div class="form-group-full">
+                <label>Tipo de Pessoa:</label>
+                <div class="radio-group-container">
+                  <input
+                    type="radio"
+                    id="tipo_pessoa-pj"
+                    name="tipo_pessoa"
+                    value="PJ"
+                    checked
+                    onclick="toggleTipoPessoa('PJ')"
+                  />
+                  <label for="tipo_pessoa-pj" style="margin-right: 15px"
+                    >Pessoa Jurídica (PJ)</label
+                  >
+                  <input
+                    type="radio"
+                    id="tipo_pessoa-pf"
+                    name="tipo_pessoa"
+                    value="PF"
+                    onclick="toggleTipoPessoa('PF')"
+                  />
+                  <label for="tipo_pessoa-pf">Pessoa Física (PF)</label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label id="cnpj-label" for="cnpj-cadastro">CNPJ:</label>
+                <input
+                  type="text"
+                  id="cnpj-cadastro"
+                  name="cnpj"
+                  placeholder="00.000.000/0000-00"
+                  maxlength="18"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label id="razao_social-label" for="razao_social-cadastro"
+                  >Razão Social:</label
+                >
+                <input
+                  type="text"
+                  id="razao_social-cadastro"
+                  name="razao_social"
+                  required
+                />
+              </div>
+
+              <div class="form-group pj-field" id="nome_fantasia-group">
+                <label>Nome Fantasia:</label>
+                <input
+                  type="text"
+                  id="nome_fantasia-cadastro"
+                  name="nome_fantasia"
+                />
+              </div>
+              <div class="form-group pj-field" id="ie-group">
+                <label>Inscrição Estadual:</label>
+                <input
+                  type="text"
+                  id="inscricao_estadual-cadastro"
+                  name="inscricao_estadual"
+                />
+              </div>
+              <div class="form-group pj-field" id="im-group">
+                <label>Inscrição Municipal:</label>
+                <input
+                  type="text"
+                  id="inscricao_municipal-cadastro"
+                  name="inscricao_municipal"
+                />
+              </div>
+              <div class="form-group pj-field" id="cnae-group">
+                <label>CNAE:</label>
+                <input type="text" id="cnae-cadastro" name="cnae" />
+              </div>
+              <div class="form-group" id="abertura-group">
+                <label id="label-data">Data Abertura:</label>
+                <input
+                  type="date"
+                  id="data_abertura-cadastro"
+                  name="data_abertura"
+                />
+              </div>
+              <div class="form-group pj-field" id="natureza-group">
+                <label>Natureza Jurídica:</label>
+                <input
+                  type="text"
+                  id="natureza_juridica-cadastro"
+                  name="natureza_juridica"
+                />
+              </div>
+
+              <h3
+                class="form-group-full"
+                style="
+                  margin-top: 20px;
+                  border-bottom: 1px solid #eee;
+                  padding-bottom: 5px;
+                "
+              >
+                📍 Endereço
+              </h3>
+
+              <div class="form-group">
+                <label>CEP:</label>
+                <input type="text" id="cep-cadastro" name="cep" maxlength="9" />
+              </div>
+              <div class="form-group">
+                <label>Logradouro:</label>
+                <input type="text" id="logradouro-cadastro" name="logradouro" />
+              </div>
+              <div class="form-group">
+                <label>Número:</label>
+                <input type="text" id="numero-cadastro" name="numero" />
+              </div>
+              <div class="form-group">
+                <label>Complemento:</label>
+                <input
+                  type="text"
+                  id="complemento-cadastro"
+                  name="complemento"
+                />
+              </div>
+              <div class="form-group">
+                <label>Bairro:</label>
+                <input type="text" id="bairro-cadastro" name="bairro" />
+              </div>
+              <div class="form-group">
+                <label>Cidade:</label>
+                <input type="text" id="cidade-cadastro" name="cidade" />
+              </div>
+              <div class="form-group">
+                <label>UF:</label>
+                <input
+                  type="text"
+                  id="estado_uf-cadastro"
+                  name="estado_uf"
+                  maxlength="2"
+                />
+              </div>
+
+              <h3
+                class="form-group-full"
+                style="
+                  margin-top: 20px;
+                  border-bottom: 1px solid #eee;
+                  padding-bottom: 5px;
+                "
+              >
+                📞 Contato e Responsável
+              </h3>
+
+              <div class="form-group">
+                <label>Nome Responsável:</label>
+                <input
+                  type="text"
+                  id="nome_responsavel-cadastro"
+                  name="nome_responsavel"
+                />
+              </div>
+              <div class="form-group">
+                <label>Cargo:</label>
+                <input
+                  type="text"
+                  id="cargo_responsavel-cadastro"
+                  name="cargo_responsavel"
+                />
+              </div>
+              <div class="form-group">
+                <label>Tel. Fixo:</label>
+                <input
+                  type="text"
+                  id="telefone_fixo-cadastro"
+                  name="telefone_fixo"
+                />
+              </div>
+              <div class="form-group">
+                <label>Celular/Zap:</label>
+                <input
+                  type="text"
+                  id="celular_whatsapp-cadastro"
+                  name="celular_whatsapp"
+                  maxlength="15"
+                  placeholder="(00) 0 0000-0000"
+                />
+              </div>
+              <div class="form-group">
+                <label>Email Principal:</label>
+                <input
+                  type="email"
+                  id="email_principal-cadastro"
+                  name="email_principal"
+                />
+              </div>
+              <div class="form-group">
+                <label>Email Financeiro:</label>
+                <input
+                  type="email"
+                  id="email_financeiro-cadastro"
+                  name="email_financeiro"
+                />
+              </div>
+
+              <div class="form-group-full" style="margin-top: 20px">
+                <label>Observações:</label>
+                <textarea
+                  id="observacoes-cadastro"
+                  name="observacoes"
+                  rows="3"
+                ></textarea>
+              </div>
+
+              <div class="form-group-full">
+                <label>Documentação / Anexo:</label>
+                <div class="file-drop-area" id="drop-area">
+                  <input
+                    type="file"
+                    id="arquivo-fornecedor"
+                    name="arquivo"
+                    class="file-input-hidden"
+                  />
+                  <div class="file-info-container" id="file-info-container">
+                    <span
+                      class="btn-secondary"
+                      onclick="document.getElementById('arquivo-fornecedor').click()"
+                      >📁 Selecionar Arquivo</span
+                    >
+                    <span id="file-name-display"
+                      >Nenhum arquivo selecionado</span
+                    >
+                    <button
+                      type="button"
+                      id="btn-remove-file"
+                      class="btn-danger hidden"
+                      style="padding: 2px 8px; margin-left: 10px"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-submit">
+                Salvar Fornecedor
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="module-content" style="margin-top: 20px">
+          <h2>📋 Fornecedores Ativos</h2>
+          <div id="feedback-listagem-fornecedor" class="hidden"></div>
+          <table id="fornecedores-table">
+            <thead>
+              <tr>
+                <th>CNPJ</th>
+                <th>Razão Social</th>
+                <th>Nome do Responsável</th>
+                <th>Celular/WhatsApp</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody id="fornecedores-table-body">
+              <tr>
+                <td colspan="5">Carregando...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="modalDetalhes" class="modal hidden">
+          <div
+            class="modal-content"
+            style="max-width: 850px; position: relative; padding-top: 40px"
+          >
+            <span
+              onclick="closeModalDetalhes()"
+              style="
+                position: absolute;
+                top: 10px;
+                right: 20px;
+                font-size: 35px;
+                cursor: pointer;
+                color: #999;
+                font-weight: bold;
+              "
+              >&times;</span
+            >
+
+            <h2
+              style="
+                color: var(--primary-color);
+                margin-bottom: 20px;
+                border-bottom: 2px solid #eee;
+                padding-bottom: 10px;
+              "
+            >
+              📋 Detalhes do Fornecedor
+            </h2>
+
+            <div id="detalhes-container"></div>
+
+            <div
+              style="
+                margin-top: 25px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-top: 1px solid #eee;
+                padding-top: 20px;
+              "
+            >
+              <button
+                id="btn-editar-final"
+                class="btn-primary"
+                style="padding: 12px 30px; font-size: 16px"
+              >
+                ✏️ Editar Dados
+              </button>
+              <button
+                class="btn-danger"
+                onclick="abrirModalDescontinuar()"
+                style="
+                  background: transparent;
+                  color: #dc3545;
+                  border: 1px solid #dc3545;
+                  font-weight: bold;
+                  padding: 10px 15px;
+                "
+              >
+                🚫 Descontinuar Fornecedor
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="modalDescontinuar" class="modal hidden">
+          <div
+            class="modal-content"
+            style="max-width: 450px; border-top: 5px solid #d9534f"
+          >
+            <h3 style="color: #d9534f; margin-bottom: 15px">
+              Encerrar Parceria
+            </h3>
+            <p style="margin-bottom: 20px; color: #666">
+              Para descontinuar este fornecedor, informe a data de encerramento
+              das atividades:
+            </p>
+
+            <div class="form-group-full">
+              <label for="data_descontinuacao_input"
+                >Data de Descontinuação:</label
+              >
+              <input
+                type="date"
+                id="data_descontinuacao_input"
+                class="form-control"
+                style="
+                  width: 100%;
+                  padding: 10px;
+                  border: 1px solid #ccc;
+                  border-radius: 5px;
+                "
+              />
+            </div>
+
+            <div
+              style="
+                display: flex;
+                gap: 10px;
+                justify-content: flex-end;
+                margin-top: 25px;
+              "
+            >
+              <button class="btn-secondary" onclick="fecharModalDescontinuar()">
+                Cancelar
+              </button>
+              <button
+                class="btn-submit"
+                style="background-color: #d9534f"
+                onclick="executarDescontinuacao()"
+              >
+                Confirmar Descontinuação
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="./fornecedor.js"></script>
+  </body>
+</html>

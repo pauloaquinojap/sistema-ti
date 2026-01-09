@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Sistema de TI</title>
+    <link rel="stylesheet" href="/assets/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Painel de Controle de TI</h1>
+    </header>
+
+    <main>
+      <nav class="sidebar">
+        <h2>Módulos</h2>
+        <ul>
+          <li><a href="index.html" class="active">Dashboard</a></li>
+          <li>
+            <a href="modulos/inventario/inventario.html">Inventário de TI</a>
+          </li>
+          <li>
+            <a href="modulos/contrato/contrato.html">Gestão de Contratos</a>
+          </li>
+          <li><a href="modulos/fornecedor/fornecedor.html">Fornecedores</a></li>
+          <li>
+            <a href="modulos/internet/internet.html">Links de Internet</a>
+          </li>
+        </ul>
+      </nav>
+
+      <section class="content">
+        <div class="module-content">
+          <h2>💰 Resumo Financeiro Mensal</h2>
+
+          <div
+            id="filter-container"
+            style="display: flex; gap: 15px; margin-bottom: 20px"
+          >
+            <label for="mes-filtro">Mês:</label>
+            <input
+              type="number"
+              id="mes-filtro"
+              min="1"
+              max="12"
+              style="width: 80px"
+            />
+
+            <label for="ano-filtro">Ano:</label>
+            <input
+              type="number"
+              id="ano-filtro"
+              min="2020"
+              max="2050"
+              style="width: 100px"
+            />
+
+            <button
+              onclick="loadFinancialData()"
+              class="btn-submit"
+              style="grid-column: span 1; padding: 5px 15px"
+            >
+              Filtrar
+            </button>
+          </div>
+
+          <div class="finance-cards">
+            <div class="card total">
+              <h3>Custo Mensal Total (Locação + Internet)</h3>
+              <p id="custo-total">R$ 0,00</p>
+            </div>
+            <div class="card locacao">
+              <h3>Custo Locação</h3>
+              <p id="custo-locacao">R$ 0,00</p>
+            </div>
+            <div class="card contratos" style="background-color: #495057">
+              <h3>Custo Compra (Acumulado)</h3>
+              <p id="custo-compra">R$ 0,00</p>
+            </div>
+            <div class="card internet">
+              <h3>Custo Internet</h3>
+              <p id="custo-internet">R$ 0,00</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-content" style="margin-top: 30px">
+          <h2>🖥️ Resumo de Equipamentos Ativos por Tipo</h2>
+          <div
+            class="finance-cards"
+            id="resumo-equipamentos-cards"
+            style="
+              display: grid;
+              grid-template-columns: repeat(5, 1fr);
+              gap: 15px;
+            "
+          >
+            <div class="card" style="background-color: #17a2b8">
+              <h3 style="font-size: 0.9em">Notebooks</h3>
+              <p id="count-notebook">0</p>
+            </div>
+            <div class="card" style="background-color: #fd7e14">
+              <h3 style="font-size: 0.9em">Desktops</h3>
+              <p id="count-desktop">0</p>
+            </div>
+            <div class="card" style="background-color: #6f42c1">
+              <h3 style="font-size: 0.9em">Monitores</h3>
+              <p id="count-monitor">0</p>
+            </div>
+            <div class="card" style="background-color: #20c997">
+              <h3 style="font-size: 0.9em">Impressoras</h3>
+              <p id="count-impressora">0</p>
+            </div>
+            <div class="card" style="background-color: #e83e8c">
+              <h3 style="font-size: 0.9em">Servidores/Outros</h3>
+              <p id="count-servidor">0</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Sistema de Gestão de TI</p>
+    </footer>
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>

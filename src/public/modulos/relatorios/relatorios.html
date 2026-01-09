@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Relatórios de TI</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="./relatorio.css" />
+    <link rel="stylesheet" href="relatorios.css" />
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <nav class="sidebar">
+        <div class="sidebar-header">
+          <i class="fa-solid fa-layer-group"></i>
+          <h2 class="sidebar-title">Módulos</h2>
+        </div>
+        <ul>
+          <li>
+            <a href="../../index.html"
+              ><i class="fa-solid fa-chart-pie"></i
+              ><span>Dashboard Financeiro</span></a
+            >
+          </li>
+          <li>
+            <a href="../equipamentos/inventario.html"
+              ><i class="fa-solid fa-computer"></i
+              ><span>Inventário de TI</span></a
+            >
+          </li>
+          <li>
+            <a href="../contrato/contrato.html"
+              ><i class="fa-solid fa-file-contract"></i
+              ><span>Gestão de Contratos</span></a
+            >
+          </li>
+          <li>
+            <a href="../fornecedor/fornecedor.html"
+              ><i class="fa-solid fa-truck-fast"></i
+              ><span>Fornecedores</span></a
+            >
+          </li>
+          <li>
+            <a href="../internet/internet.html"
+              ><i class="fa-solid fa-wifi"></i><span>Links de Internet</span></a
+            >
+          </li>
+          <li>
+            <a href="relatorios.html" class="active"
+              ><i class="fa-solid fa-file-export"></i><span>Relatórios</span></a
+            >
+          </li>
+        </ul>
+      </nav>
+
+      <section class="content">
+        <div class="module-content">
+          <div class="header-actions">
+            <h2>Central de Relatórios</h2>
+          </div>
+
+          <div class="report-grid">
+            <div
+              class="report-card"
+              onclick="gerarRelatorio('inventario_geral')"
+            >
+              <i class="fa-solid fa-list-check"></i>
+              <h3>Inventário Completo</h3>
+              <p>Lista todos os ativos com detalhes técnicos e localização.</p>
+              <button class="btn-generate">Gerar PDF</button>
+            </div>
+
+            <div class="report-card" onclick="gerarRelatorio('custos_locacao')">
+              <i class="fa-solid fa-money-bill-transfer"></i>
+              <h3>Custos de Locação</h3>
+              <p>Resumo mensal de equipamentos alugados por fornecedor.</p>
+              <button class="btn-generate">Gerar PDF</button>
+            </div>
+
+            <div
+              class="report-card"
+              onclick="gerarRelatorio('vencimento_contratos')"
+            >
+              <i class="fa-solid fa-calendar-exclamation"></i>
+              <h3>Contratos a Vencer</h3>
+              <p>Alertas de contratos que expiram nos próximos 60 dias.</p>
+              <button class="btn-generate">Gerar PDF</button>
+            </div>
+
+            <div
+              class="report-card"
+              onclick="gerarRelatorio('historico_manutencao')"
+            >
+              <i class="fa-solid fa-screwdriver-wrench"></i>
+              <h3>Manutenções/Upgrades</h3>
+              <p>Log completo de alterações técnicas realizadas nos ativos.</p>
+              <button class="btn-generate">Gerar PDF</button>
+            </div>
+          </div>
+
+          <div class="filter-controls">
+            <h3><i class="fa-solid fa-sliders"></i> Filtros Específicos</h3>
+            <div class="filter-row">
+              <select id="filtro-unidade">
+                <option value="">Todas as Unidades</option>
+                <option value="MATRIZ">Matriz</option>
+              </select>
+              <input type="month" id="filtro-mes" value="2023-10" />
+              <button class="btn-primary" style="background-color: #27ae60">
+                <i class="fa-solid fa-file-excel"></i> Exportar Excel
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="modal-filtro-inventario" class="modal-overlay hidden">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <button class="close-btn" onclick="fecharModalFiltro()">&times;</button>
+        <h3><i class="fa-solid fa-filter"></i> Filtros do Inventário</h3>
+        <p>Selecione os critérios para geração do relatório:</p>
+
+        <form id="form-filtro-inventario">
+          <div class="form-grid-cadastro">
+            <div class="form-group">
+              <label>Tipo de Equipamento:</label>
+              <select name="tipo_equipamento">
+                <option value="">Todos</option>
+                <option value="NOTEBOOK">Notebook</option>
+                <option value="DESKTOP">Desktop</option>
+                <option value="MONITOR">Monitor</option>
+                <option value="IMPRESSORA">Impressora</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Loja/Unidade:</label>
+              <input type="text" name="loja_atual" placeholder="Ex: Matriz" />
+            </div>
+            <div class="form-group">
+              <label>Tipo de Aquisição:</label>
+              <select name="tipo_aquisicao">
+                <option value="">Todos</option>
+                <option value="COMPRA">Compra</option>
+                <option value="LOCACAO">Locação</option>
+                <option value="COMODATO">Comodato</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Empresa Responsável:</label>
+              <input
+                type="text"
+                name="empresa_responsavel"
+                placeholder="Ex: Positivo"
+              />
+            </div>
+            <div class="form-group-full">
+              <label>Status do Equipamento:</label>
+              <select name="status">
+                <option value="ATIVO">Apenas Ativos</option>
+                <option value="BAIXADO">Apenas Baixados</option>
+                <option value="TODOS">Todos</option>
+              </select>
+            </div>
+
+            <div class="form-group-full">
+              <button
+                type="button"
+                class="btn-submit"
+                onclick="processarRelatorioInventario()"
+              >
+                <i class="fa-solid fa-file-pdf"></i> Gerar Relatório Agora
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="relatorios.js"></script>
+  </body>
+</html>

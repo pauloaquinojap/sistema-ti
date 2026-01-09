@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Estações de Trabalho - TI</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../inventario/inventario.css" />
+    <link rel="stylesheet" href="estacoes.css" />
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <nav class="sidebar">
+        <div class="sidebar-header">
+          <i class="fa-solid fa-layer-group"></i>
+          <h2 class="sidebar-title">Módulos</h2>
+        </div>
+        <ul>
+          <li>
+            <a href="../../index.html"
+              ><i class="fa-solid fa-chart-pie"></i
+              ><span>Dashboard Financeiro</span></a
+            >
+          </li>
+          <li>
+            <a href="../inventario/inventario.html"
+              ><i class="fa-solid fa-computer"></i
+              ><span>Inventário de TI</span></a
+            >
+          </li>
+          <li>
+            <a href="../contrato/contrato.html"
+              ><i class="fa-solid fa-file-contract"></i
+              ><span>Gestão de Contratos</span></a
+            >
+          </li>
+          <li>
+            <a href="../fornecedor/fornecedor.html"
+              ><i class="fa-solid fa-truck-fast"></i
+              ><span>Fornecedores</span></a
+            >
+          </li>
+          <li>
+            <a href="../internet/internet.html"
+              ><i class="fa-solid fa-wifi"></i><span>Links de Internet</span></a
+            >
+          </li>
+          <li>
+            <a href="estacoes.html" class="active"
+              ><i class="fa-solid fa-network-wired"></i
+              ><span>Estações de Trabalho</span></a
+            >
+          </li>
+          <li>
+            <a href="../relatorio/relatorio.html"
+              ><i class="fa-solid fa-clipboard-list"></i
+              ><span>Relatórios</span></a
+            >
+          </li>
+        </ul>
+      </nav>
+
+      <section class="content">
+        <div
+          class="module-content"
+          style="
+            height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+          "
+        >
+          <div class="header-actions">
+            <h2>Mapa de Estações de Trabalho</h2>
+            <div class="network-toolbar">
+              <button
+                class="btn-tool"
+                onclick="desativarModoCabo()"
+                title="Modo Seleção"
+              >
+                <i class="fa-solid fa-mouse-pointer"></i>
+              </button>
+              <button class="btn-tool" onclick="zoomIn()">
+                <i class="fa-solid fa-plus"></i>
+              </button>
+              <button class="btn-tool" onclick="zoomOut()">
+                <i class="fa-solid fa-minus"></i>
+              </button>
+              <button class="btn-tool" onclick="resetZoom()">
+                <i class="fa-solid fa-arrows-to-dot"></i>
+              </button>
+            </div>
+          </div>
+
+          <div style="display: flex; flex: 1; overflow: hidden; gap: 20px">
+            <div
+              id="canvas-container"
+              ondragover="allowDrop(event)"
+              ondrop="drop(event)"
+            >
+              <div id="map-canvas"></div>
+            </div>
+
+            <aside class="items-sidebar">
+              <div class="sidebar-section">
+                <h3><i class="fa-solid fa-table"></i> Estrutura</h3>
+                <div
+                  class="drag-item"
+                  draggable="true"
+                  ondragstart="drag(event, 'BASE', 'fa-table-cells', 'Mesa de Trabalho')"
+                >
+                  <i class="fa-solid fa-table-cells" style="color: #8e44ad"></i>
+                  Mesa (Base)
+                </div>
+              </div>
+
+              <div class="sidebar-section">
+                <h3><i class="fa-solid fa-computer"></i> Equipamentos</h3>
+                <div
+                  class="drag-item"
+                  draggable="true"
+                  ondragstart="drag(event, 'EQUIPAMENTO', 'fa-desktop', 'Desktop')"
+                >
+                  <i class="fa-solid fa-desktop"></i> Desktop
+                </div>
+                <div
+                  class="drag-item"
+                  draggable="true"
+                  ondragstart="drag(event, 'EQUIPAMENTO', 'fa-display', 'Monitor')"
+                >
+                  <i class="fa-solid fa-display"></i> Monitor
+                </div>
+              </div>
+
+              <div class="sidebar-section">
+                <h3><i class="fa-solid fa-link"></i> Conexões (Cabos)</h3>
+                <div class="cable-selector">
+                  <button
+                    class="btn-cable"
+                    id="btn-REDE"
+                    onclick="setLineType('REDE')"
+                  >
+                    <i
+                      class="fa-solid fa-grip-lines"
+                      style="color: #27ae60"
+                    ></i>
+                    Rede LAN
+                  </button>
+                  <button
+                    class="btn-cable"
+                    id="btn-HDMI"
+                    onclick="setLineType('HDMI')"
+                  >
+                    <i
+                      class="fa-solid fa-grip-lines"
+                      style="color: #e67e22"
+                    ></i>
+                    Cabo HDMI
+                  </button>
+                  <button
+                    class="btn-cable"
+                    id="btn-FORCA"
+                    onclick="setLineType('FORCA')"
+                  >
+                    <i class="fa-solid fa-bolt" style="color: #e74c3c"></i>
+                    Energia
+                  </button>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="modalVinculo" class="modal-overlay" style="display: none">
+      <div class="modal-content">
+        <h3>Vincular Equipamento</h3>
+        <select id="selectEquipamentoInventario"></select>
+        <div class="modal-buttons">
+          <button onclick="fecharModal()">Cancelar</button>
+          <button class="btn-save" onclick="confirmarVinculo()">
+            Salvar Vínculo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leader-line-new@1.1.9/leader-line.min.js"></script>
+
+    <script>
+      function allowDrop(ev) {
+        ev.preventDefault();
+      }
+      function drag(ev, tipo, icone, label) {
+        ev.dataTransfer.setData("tipo_item", tipo);
+        ev.dataTransfer.setData("icone_classe", icone);
+        ev.dataTransfer.setData("label_mapa", label);
+      }
+      async function drop(ev) {
+        ev.preventDefault();
+        const tipo_item = ev.dataTransfer.getData("tipo_item");
+        const icone_classe = ev.dataTransfer.getData("icone_classe");
+        const label_mapa = ev.dataTransfer.getData("label_mapa");
+        const rect = document
+          .getElementById("map-canvas")
+          .getBoundingClientRect();
+        const scale = panzoom.getScale();
+        const x = (ev.clientX - rect.left) / scale;
+        const y = (ev.clientY - rect.top) / scale;
+
+        const res = await fetch("/api/estacoes/adicionar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tipo_item, icone_classe, x, y, label_mapa }),
+        });
+
+        const novoItem = await res.json();
+        if (novoItem.id) {
+          renderizarElemento(novoItem.id, {
+            tipo_item,
+            icone_classe,
+            x,
+            y,
+            label_mapa,
+          });
+        }
+      }
+    </script>
+    <script src="estacoes.js"></script>
+  </body>
+</html>

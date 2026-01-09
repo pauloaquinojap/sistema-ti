@@ -1,0 +1,174 @@
+:root {
+  --c-border: #dfe4ea;
+  --radius: 8px;
+  --c-text: #2f3542;
+}
+
+#canvas-container {
+  flex: 1;
+  overflow: hidden; /* ESSENCIAL: Isso corta as linhas quando saem da área cinza */
+  background-color: #f8f9fa;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  margin-top: 20px;
+  position: relative; /* Define o limite para o 'parent' do LeaderLine */
+  cursor: grab;
+  z-index: 1;
+}
+
+#canvas-container:active {
+  cursor: grabbing;
+}
+
+#map-canvas {
+  width: 5000px;
+  height: 5000px;
+  background-image: linear-gradient(var(--c-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--c-border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  position: relative;
+  transform-origin: 0 0;
+}
+
+/* --- AJUSTE LÍDER LINE --- */
+.leader-line {
+  /* Força a linha a respeitar o container pai */
+  position: absolute !important;
+  z-index: 5 !important;
+  pointer-events: none;
+}
+
+.network-toolbar {
+  display: flex;
+  gap: 8px;
+  background: white;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--c-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 100; /* Garante que os botões fiquem acima de qualquer cabo */
+}
+
+.btn-tool {
+  background: white;
+  border: 1px solid var(--c-border);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.map-element {
+  position: absolute;
+  width: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+}
+
+.map-element i {
+  font-size: 28px;
+  color: #222;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--c-border);
+}
+
+.map-element span {
+  margin-top: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--c-text);
+  text-align: center;
+}
+
+.items-sidebar {
+  width: 250px;
+  background: white;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  margin-top: 20px;
+  padding: 15px;
+  position: relative;
+  z-index: 100; /* Sidebar acima dos cabos */
+}
+
+.drag-item {
+  padding: 10px;
+  background: #f8f9fa;
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  cursor: grab;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.map-element[data-tipo="BASE"] i {
+  width: 120px;
+  height: 80px;
+  font-size: 50px;
+  background: #f1f2f6;
+  border: 2px dashed #bdc3c7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.map-element[data-tipo="EQUIPAMENTO"] {
+  z-index: 20;
+}
+
+.cable-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.btn-cable {
+  width: 100%;
+  text-align: left;
+  padding: 10px;
+  border: 1px solid var(--c-border);
+  background: #fff;
+  border-radius: 6px;
+}
+
+.btn-cable.active {
+  background: #f1f2f6;
+  border-color: #222;
+  font-weight: bold;
+}
+
+.selecionado-cabo i {
+  outline: 3px solid #3498db;
+  outline-offset: 4px;
+}
+
+.mesa-slots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px;
+  width: 100%;
+}
+
+.mesa-label {
+  font-size: 11px;
+  font-weight: bold;
+  background: #222;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  position: absolute;
+  top: -20px;
+}

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Relatórios - Sistema TI</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <link rel="stylesheet" href="relatorio.css" />
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <nav class="sidebar">
+        <div class="sidebar-header">
+          <i class="fa-solid fa-layer-group"></i>
+          <h2 class="sidebar-title">Módulos</h2>
+        </div>
+        <ul>
+          <li>
+            <a href="../../index.html">
+              <i class="fa-solid fa-chart-pie"></i>
+              <span>Dashboard Financeiro</span>
+            </a>
+          </li>
+          <li>
+            <a href="../inventario/inventario.html">
+              <i class="fa-solid fa-computer"></i>
+              <span>Inventário de TI</span>
+            </a>
+          </li>
+          <li>
+            <a href="../contrato/contrato.html">
+              <i class="fa-solid fa-file-contract"></i>
+              <span>Gestão de Contratos</span>
+            </a>
+          </li>
+          <li>
+            <a href="../fornecedor/fornecedor.html">
+              <i class="fa-solid fa-truck-fast"></i>
+              <span>Fornecedores</span>
+            </a>
+          </li>
+          <li>
+            <a href="../internet/internet.html">
+              <i class="fa-solid fa-wifi"></i>
+              <span>Links de Internet</span>
+            </a>
+          </li>
+          <li>
+            <a href="../estacoes/estacoes.html">
+              <i class="fa-solid fa-network-wired"></i>
+              <span>Estações de Trabalho</span>
+            </a>
+          </li>
+          <li>
+            <a href="relatorio.html" class="active">
+              <i class="fa-solid fa-clipboard-list"></i>
+              <span>Relatórios</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <section class="content">
+        <div class="header-title">
+          <h2>Central de Relatórios</h2>
+          <p>Selecione um módulo para gerar relatórios detalhados</p>
+        </div>
+
+        <div class="reports-grid">
+          <div class="report-card" onclick="openModalInventario()">
+            <div class="icon-box"><i class="fa-solid fa-computer"></i></div>
+            <h3>Inventário de TI</h3>
+            <p>Relatórios de equipamentos, localização e custos.</p>
+          </div>
+
+          <div class="report-card disabled">
+            <div class="icon-box">
+              <i class="fa-solid fa-file-contract"></i>
+            </div>
+            <h3>Contratos</h3>
+            <p>Vencimentos e valores mensais.</p>
+          </div>
+
+          <div class="report-card disabled">
+            <div class="icon-box"><i class="fa-solid fa-truck-fast"></i></div>
+            <h3>Fornecedores</h3>
+            <p>Lista de parceiros e contatos.</p>
+          </div>
+
+          <div class="report-card disabled">
+            <div class="icon-box"><i class="fa-solid fa-wifi"></i></div>
+            <h3>Links de Internet</h3>
+            <p>Consumo e custos de links.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="modal-relatorio-inventario" class="modal-overlay hidden">
+      <div class="modal-content">
+        <button class="close-btn" onclick="closeModalInventario()">
+          &times;
+        </button>
+        <div class="modal-header">
+          <i class="fa-solid fa-print"></i>
+          <h3>Relatórios de Inventário</h3>
+        </div>
+
+        <div class="modal-body">
+          <div class="report-tabs">
+            <button class="tab-btn active" onclick="switchTab('geral')">
+              Relatório Geral
+            </button>
+            <button class="tab-btn" onclick="switchTab('manutencao')">
+              Manutenção
+            </button>
+          </div>
+
+          <div id="tab-geral" class="tab-content active">
+            <form id="form-relatorio-geral">
+              <div class="filters-grid">
+                <div class="filter-group">
+                  <label>1. Tipos de Equipamento:</label>
+                  <div class="custom-select-box" id="container-tipos">
+                    <p>Carregando...</p>
+                  </div>
+                </div>
+
+                <div class="filter-group">
+                  <label>2. Fornecedores:</label>
+                  <div class="custom-select-box" id="container-fornecedores">
+                    <p>Carregando...</p>
+                  </div>
+                </div>
+
+                <div class="filter-group">
+                  <label>3. Lojas/Locais:</label>
+                  <div class="custom-select-box" id="container-lojas">
+                    <p>Carregando...</p>
+                  </div>
+                </div>
+
+                <div class="filter-group small">
+                  <label>4. Tipo de Aquisição:</label>
+                  <select id="select-aquisicao">
+                    <option value="AMBOS" selected>
+                      Ambos (Compra e Locação)
+                    </option>
+                    <option value="COMPRA">Somente Compra (Próprio)</option>
+                    <option value="LOCACAO">Somente Locação</option>
+                    <option value="COMODATO">Comodato</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="actions-row">
+                <button type="button" class="btn-pdf" onclick="gerarPDF()">
+                  <i class="fa-solid fa-file-pdf"></i> Emitir PDF
+                </button>
+                <button type="button" class="btn-excel" onclick="gerarExcel()">
+                  <i class="fa-solid fa-file-excel"></i> Emitir Excel
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div id="tab-manutencao" class="tab-content">
+            <form id="form-relatorio-manutencao">
+              <div
+                class="filter-group-full"
+                style="margin-bottom: 20px; text-align: center"
+              >
+                <label style="font-size: 16px; margin-right: 15px"
+                  >Tipo de Relatório:</label
+                >
+                <input
+                  type="radio"
+                  id="manut-realizadas"
+                  name="subTipoManutencao"
+                  value="REALIZADAS"
+                  checked
+                  onchange="toggleDateLabel()"
+                />
+                <label for="manut-realizadas" style="margin-right: 20px"
+                  >Realizadas (Histórico)</label
+                >
+
+                <input
+                  type="radio"
+                  id="manut-arealizar"
+                  name="subTipoManutencao"
+                  value="A_REALIZAR"
+                  onchange="toggleDateLabel()"
+                />
+                <label for="manut-arealizar">A Realizar (Próximas)</label>
+              </div>
+
+              <div class="filters-grid">
+                <div class="filter-group small">
+                  <label id="label-datas">Período da Manutenção:</label>
+                  <div style="display: flex; gap: 10px">
+                    <input
+                      type="date"
+                      id="data-inicio-manut"
+                      required
+                      style="flex: 1"
+                    />
+                    <span style="align-self: center">até</span>
+                    <input
+                      type="date"
+                      id="data-fim-manut"
+                      required
+                      style="flex: 1"
+                    />
+                  </div>
+                </div>
+
+                <div class="filter-group">
+                  <label>Tipos de Equipamento:</label>
+                  <div class="custom-select-box" id="container-tipos-manut">
+                    <p>Carregando...</p>
+                  </div>
+                </div>
+
+                <div class="filter-group">
+                  <label>Fornecedores:</label>
+                  <div
+                    class="custom-select-box"
+                    id="container-fornecedores-manut"
+                  >
+                    <p>Carregando...</p>
+                  </div>
+                </div>
+
+                <div class="filter-group">
+                  <label>Lojas/Locais:</label>
+                  <div class="custom-select-box" id="container-lojas-manut">
+                    <p>Carregando...</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="actions-row">
+                <button
+                  type="button"
+                  class="btn-pdf"
+                  onclick="gerarPDFManutencao()"
+                >
+                  <i class="fa-solid fa-file-pdf"></i> PDF Manutenção
+                </button>
+                <button
+                  type="button"
+                  class="btn-excel"
+                  onclick="gerarExcelManutencao()"
+                >
+                  <i class="fa-solid fa-file-excel"></i> Excel Manutenção
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="relatorio.js"></script>
+  </body>
+</html>
